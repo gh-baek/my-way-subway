@@ -1,0 +1,32 @@
+name: subway
+description: MJU subway team porject1
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0-218.1.beta <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.3.3
+  excel: ^2.1.0
+  sliding_up_panel: ^2.0.0+1
+  material_floating_search_bar_2: ^0.5.0
+  photo_view: ^0.14.0
+  dijkstra: ^0.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+
+  assets:
+    - lib/assets/images/map.jpg
+    - lib/assets/images/map.png
+    - lib/assets/images/MyWay.png
+  uses-material-design: true
