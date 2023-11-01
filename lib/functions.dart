@@ -1,13 +1,14 @@
-import 'dart:io';
-
 import 'package:dijkstra/dijkstra.dart';
 import 'package:excel/excel.dart';
+import 'package:flutter/services.dart';
 
-late final Set stationSet; // 전체 역 종류
-late final List<List> pairList; // 역 간 그래프
-late final Graph timeGraph; // 역 간 소요 시간 그래프
-late final Graph distGraph; // 역 간 거리 그래프
-late final Graph costGraph; // 역 간 비용 그래프
+class StationInfo {
+  static late Set stationSet = Set(); // 전체 역 종류
+  static late List<List> pairList = []; // 역 간 그래프
+  static late Graph timeGraph = Graph({}); // 역 간 소요 시간 그래프
+  static late Graph distGraph = Graph({}); // 역 간 거리 그래프
+  static late Graph costGraph = Graph({}); // 역 간 비용 그래프
+}
 
 //역(노드)로 구성된 그래프
 class Graph {
@@ -18,9 +19,10 @@ class Graph {
 
 //역 정보 및 그래프를 받아오는 함수
 //앱 실행 최초에만 실행하여 각 정보 전역 변수에 저장
-void getStationInfo() {
-  var file = 'lib/data/stations.xlsx';
-  var bytes = File(file).readAsBytesSync();
+void getStationInfo() async {
+  ByteData data = await rootBundle.load("lib/data/stations.xlsx");
+  List<int> bytes =
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   var excel = Excel.decodeBytes(bytes);
 
   for (var table in excel.tables.keys) {
@@ -47,23 +49,23 @@ void getStationInfo() {
     }
 
     // 모든 역 입렵 -> set 형식이므로 중복은 제거
-    stationSet = {};
+    StationInfo.stationSet = {};
     for (var i = 0; i < maxRows - 1; i++) {
-      stationSet.add(stations[i]['st1']);
-      stationSet.add(stations[i]['st2']);
+      StationInfo.stationSet.add(stations[i]['st1']);
+      StationInfo.stationSet.add(stations[i]['st2']);
     }
 
     // 역 간 연결 정보를 저장
-    pairList = [];
+    StationInfo.pairList = [];
     for (var i = 0; i < maxRows - 1; i++) {
-      pairList.add([stations[i]['st1'], stations[i]['st2']]);
+      StationInfo.pairList.add([stations[i]['st1'], stations[i]['st2']]);
     }
     Map<dynamic, Map> timeNodes = {};
     Map<dynamic, Map> distNodes = {};
     Map<dynamic, Map> costNodes = {};
 
     //역 간 소요 시간에 대한 timeGraph 생성 for문
-    for (var st in stationSet) {
+    for (var st in StationInfo.stationSet) {
       Map data = {};
       for (var i = 0; i < maxRows - 1; i++) {
         if (stations[i]['st1'] == st) {
@@ -74,11 +76,11 @@ void getStationInfo() {
       }
       timeNodes[st] = data;
     }
-    timeGraph = Graph(timeNodes);
+    StationInfo.timeGraph = Graph(timeNodes);
     //print(timeGraph.nodes);
 
     //역 간 거리에 대한 distGraph 생성 for문
-    for (var st in stationSet) {
+    for (var st in StationInfo.stationSet) {
       Map data = {};
       for (var i = 0; i < maxRows - 1; i++) {
         if (stations[i]['st1'] == st) {
@@ -89,10 +91,10 @@ void getStationInfo() {
       }
       distNodes[st] = data;
     }
-    distGraph = Graph(distNodes);
+    StationInfo.distGraph = Graph(distNodes);
 
     //역 간 비용에 대한 costGraph 생성 for문
-    for (var st in stationSet) {
+    for (var st in StationInfo.stationSet) {
       Map data = {};
       for (var i = 0; i < maxRows - 1; i++) {
         if (stations[i]['st1'] == st) {
@@ -103,20 +105,20 @@ void getStationInfo() {
       }
       costNodes[st] = data;
     }
-    costGraph = Graph(costNodes);
+    StationInfo.costGraph = Graph(costNodes);
     // print(costGraph.nodes);
   }
 }
 
 // 길 찾기 함수: 파라미터는 departure(출발역)와 arrival(도착역)
-void findBestWay({required int departure, required int arrival}) {
-  var output = Dijkstra.findPathFromPairsList(pairList, departure, arrival);
-  var timeOutput =
-      Dijkstra.findPathFromGraph(timeGraph.nodes, departure, arrival);
-  var distOutput =
-      Dijkstra.findPathFromGraph(distGraph.nodes, departure, arrival);
-  var costOutput =
-      Dijkstra.findPathFromGraph(costGraph.nodes, departure, arrival);
+Map findBestWay({required int departure, required int arrival}) {
+  //var output = Dijkstra.findPathFromPairsList(stationInfo.pairList, departure, arrival);
+  var timeOutput = Dijkstra.findPathFromGraph(
+      StationInfo.timeGraph.nodes, departure, arrival);
+  var distOutput = Dijkstra.findPathFromGraph(
+      StationInfo.distGraph.nodes, departure, arrival);
+  var costOutput = Dijkstra.findPathFromGraph(
+      StationInfo.costGraph.nodes, departure, arrival);
 
   print("best time output:");
   print(timeOutput);
@@ -124,4 +126,6 @@ void findBestWay({required int departure, required int arrival}) {
   print(distOutput);
   print("best cost output:");
   print(costOutput);
+
+  return {'time': timeOutput, 'dist': distOutput, 'cost': costOutput};
 }
