@@ -1,4 +1,4 @@
-# subway
+# MyWay 지하철 어플리케이션
 
 MJU subway team porject1
 
