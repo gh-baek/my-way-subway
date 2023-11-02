@@ -15,19 +15,19 @@ class _HomePageState extends State<HomePage> {
   final SearchController _departureSearchController = SearchController();
   final SearchController _arrivalSearchController = SearchController();
 
-  String selectedDept = '';
-  String selectedArr = '';
+  String _selectedDept = '';
+  String _selectedArr = '';
 
   // these will be reused later
-  final leading = const Icon(Icons.search);
+  final Icon _leading = const Icon(Icons.search);
 
-  final searchbutton = [
+  final List<Widget> _searchButton = [
     IconButton(
       icon: const Icon(Icons.search),
       onPressed: () {},
     ),
   ];
-  List recentSearch = ['101', '102', '104', '121', '124'];
+  List _recentSearch = ['101', '102', '104', '121', '124'];
 
   @override
   void initState() {
@@ -58,19 +58,19 @@ class _HomePageState extends State<HomePage> {
                         (BuildContext context, SearchController controller) {
                       return SearchBar(
                         onChanged: (input) {
-                          selectedDept = input;
+                          _selectedDept = input;
                           _departureSearchController.text = input;
                         },
-                        hintText: selectedDept,
+                        hintText: _selectedDept,
                         trailing: [
                           IconButton(
                             icon: const Icon(Icons.compare_arrows_sharp),
                             onPressed: () {
-                              String temp = selectedDept;
-                              selectedDept = selectedArr;
-                              selectedArr = temp;
-                              _departureSearchController.text = selectedDept;
-                              _arrivalSearchController.text = selectedArr;
+                              String temp = _selectedDept;
+                              _selectedDept = _selectedArr;
+                              _selectedArr = temp;
+                              _departureSearchController.text = _selectedDept;
+                              _arrivalSearchController.text = _selectedArr;
                               setState(() {});
                             },
                           ),
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                     suggestionsBuilder: (BuildContext context,
                         SearchController deptController) {
                       final keyword = deptController.value.text;
-                      selectedDept = keyword;
+                      _selectedDept = keyword;
                       return keyword.toString() != ''
                           ? List.generate(
                                   StationInfo.stationSet.toList().length,
@@ -99,14 +99,14 @@ class _HomePageState extends State<HomePage> {
                                   title: Text(item.toString()),
                                   onTap: () {
                                     setState(() {
-                                      selectedDept = item.toString();
+                                      _selectedDept = item.toString();
                                       deptController.closeView(item.toString());
                                       FocusScope.of(context).unfocus();
                                     });
                                   },
                                 ),
                               )
-                          : List.generate(5, (index) => recentSearch[index])
+                          : List.generate(5, (index) => _recentSearch[index])
                               .where((element) => element
                                   .toLowerCase()
                                   .startsWith(keyword.toLowerCase()))
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                                   title: Text(item.toString()),
                                   onTap: () {
                                     setState(() {
-                                      selectedDept = item.toString();
+                                      _selectedDept = item.toString();
                                       deptController.closeView(item);
                                       FocusScope.of(context).unfocus();
                                     });
@@ -134,10 +134,10 @@ class _HomePageState extends State<HomePage> {
                         (BuildContext context, SearchController controller) {
                       return SearchBar(
                         onChanged: (input) {
-                          selectedArr = input;
+                          _selectedArr = input;
                           _arrivalSearchController.text = input;
                         },
-                        hintText: selectedArr,
+                        hintText: _selectedArr,
                         trailing: [
                           IconButton(
                             icon: const Icon(Icons.search),
@@ -146,8 +146,8 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ResultPage(
-                                            departure: selectedDept,
-                                            arrival: selectedArr,
+                                            departure: _selectedDept,
+                                            arrival: _selectedArr,
                                           )));
                             },
                           ),
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                     suggestionsBuilder:
                         (BuildContext context, SearchController arrController) {
                       final keyword = arrController.value.text;
-                      selectedArr = keyword;
+                      _selectedArr = keyword;
                       return keyword.toString() != ''
                           ? List.generate(
                                   StationInfo.stationSet.toList().length,
@@ -175,14 +175,14 @@ class _HomePageState extends State<HomePage> {
                                   title: Text(item.toString()),
                                   onTap: () {
                                     setState(() {
-                                      selectedArr = item.toString();
+                                      _selectedArr = item.toString();
                                       arrController.closeView(item.toString());
                                       FocusScope.of(context).unfocus();
                                     });
                                   },
                                 ),
                               )
-                          : List.generate(5, (index) => recentSearch[index])
+                          : List.generate(5, (index) => _recentSearch[index])
                               .where((element) => element
                                   .toString()
                                   .toLowerCase()
@@ -192,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                                   title: Text(item.toString()),
                                   onTap: () {
                                     setState(() {
-                                      selectedArr = item.toString();
+                                      _selectedArr = item.toString();
                                       arrController.closeView(item);
                                       FocusScope.of(context).unfocus();
                                     });
