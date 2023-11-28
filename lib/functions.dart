@@ -2,12 +2,118 @@ import 'package:dijkstra/dijkstra.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 
+Map lineInfo = {
+  1: [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123
+  ],
+  2: [
+    101,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217
+  ],
+  3: [207, 301, 302, 303, 304, 123, 305, 306, 307, 308, 107],
+  4: [
+    104,
+    401,
+    307,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    115,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    216
+  ],
+  5: [209, 501, 502, 503, 504, 122, 505, 506, 403, 507, 109],
+  6: [
+    601,
+    602,
+    121,
+    603,
+    604,
+    605,
+    606,
+    116,
+    607,
+    608,
+    609,
+    412,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    417,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622
+  ],
+  7: [202, 303, 503, 601, 701, 702, 703, 704, 705, 706, 416, 707, 614],
+  8: [113, 801, 802, 803, 409, 608, 804, 805, 806, 705, 618, 214],
+  9: [112, 901, 406, 605, 902, 119, 903, 702, 904, 621, 211]
+};
+
 class StationInfo {
-  static late Set stationSet = Set(); // 전체 역 종류
-  static late List<List> pairList = []; // 역 간 그래프
-  static late Graph timeGraph = Graph({}); // 역 간 소요 시간 그래프
-  static late Graph distGraph = Graph({}); // 역 간 거리 그래프
-  static late Graph costGraph = Graph({}); // 역 간 비용 그래프
+  static Set stationSet = Set(); // 전체 역 종류
+  static List<List> pairList = []; // 역 간 그래프
+  //static Map stationLine = {};
+  static Graph timeGraph = Graph({}); // 역 간 소요 시간 그래프
+  static Graph distGraph = Graph({}); // 역 간 거리 그래프
+  static Graph costGraph = Graph({}); // 역 간 비용 그래프
+  static List<Station> stationList = [];
 }
 
 //역(노드)로 구성된 그래프
@@ -17,9 +123,66 @@ class Graph {
   Graph(this.nodes);
 }
 
+//역 정보 클래스
+class Station {
+  int station;
+  List<int> lines;
+  Map prevStation; //{line1: prevSt of line1, line2: prevSt of line2}
+  Map nextStation;
+
+  Station(
+      {required this.station,
+      required this.prevStation,
+      required this.nextStation,
+      required this.lines});
+}
+
+void setStationList() {
+  for (var st in StationInfo.stationSet) {
+    List<int> lineList = [];
+
+    //해당 역을 지나는 모든 노선 찾기
+    for (var entry in lineInfo.entries) {
+      if (entry.value.contains(st)) {
+        lineList.add(entry.key);
+      }
+    }
+    // prevStation과 nextStation 일단 -1로 설정 후 모든 역의 노선 정보가 정해진 후 할당 예정
+    Station station =
+        Station(station: st, prevStation: {}, nextStation: {}, lines: lineList);
+    StationInfo.stationList.add(station);
+  }
+
+  //모든 역과 각 역의 각 노선에 대한 이전, 다음역 할당
+  for (var i = 0; i < StationInfo.stationList.length; i++) {
+    Station st = StationInfo.stationList[i];
+    Map prevSt = {}; //{line1: prevSt of line1, line2: prevSt of line2}
+    Map nextSt = {}; //{line1: nextSt of line1, line2: nextSt of line2}
+
+    for (var pair in StationInfo.pairList) {
+      if (pair.contains(st.station)) {
+        for (var line in st.lines) {
+          if (st.station == pair[0]) {
+            if (lineInfo[line].contains(pair[1])) {
+              nextSt[line] = pair[1];
+            }
+          } else {
+            if (lineInfo[line].contains(pair[0])) {
+              prevSt[line] = pair[0];
+            }
+          }
+        }
+      }
+    }
+
+    StationInfo.stationList[i].prevStation = prevSt;
+    StationInfo.stationList[i].nextStation = nextSt;
+  }
+}
+
 //역 정보 및 그래프를 받아오는 함수
 //앱 실행 최초에만 실행하여 각 정보 전역 변수에 저장
-void getStationInfo() async {
+void setStationInfo() async {
   ByteData data = await rootBundle.load("lib/data/stations.xlsx");
   List<int> bytes =
       data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -106,8 +269,9 @@ void getStationInfo() async {
       costNodes[st] = data;
     }
     StationInfo.costGraph = Graph(costNodes);
-    // print(costGraph.nodes);
   }
+
+  setStationList();
 }
 
 // 길 찾기 함수: 파라미터는 departure(출발역)와 arrival(도착역)

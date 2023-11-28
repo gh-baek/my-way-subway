@@ -11,7 +11,6 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
-    TransformationController controller = TransformationController();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(),
