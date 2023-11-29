@@ -25,6 +25,7 @@ dev_dependencies:
   flutter_lints: ^3.0.1
 
 flutter:
+  uses-material-design: true
 
   assets:
     - lib/assets/images/map.jpg
@@ -50,4 +51,3 @@ flutter:
           weight: 700
         - asset: lib/assets/fonts/Pretendard/Pretendard-Black.otf
           weight: 900
-  uses-material-design: true

@@ -138,7 +138,7 @@ class _SearchStationState extends State<SearchStation> {
               itemBuilder: (BuildContext context, int index) {
                 return _buildLineTile(index + 1);
               },
-            )
+            ),
           ],
         ),
       ),
@@ -149,10 +149,14 @@ class _SearchStationState extends State<SearchStation> {
     return Card(
       color: Colors.white,
       child: ExpansionTile(
-        leading: Icon(Icons.subway_sharp, color: lineColorMap[line]),
+        leading: Icon(
+          Icons.subway_sharp,
+          color: lineColorMap[line],
+          size: 35,
+        ),
         title: Text(
           '${line}호선',
-          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
         ),
         children: List.generate(
           lineInfo[line].length,
@@ -164,6 +168,7 @@ class _SearchStationState extends State<SearchStation> {
                   MaterialPageRoute(
                     builder: (context) => StationInfoPage(
                       station: lineInfo[line][index].toString(),
+                      line: line,
                     ),
                   ),
                 );

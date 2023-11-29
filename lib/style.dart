@@ -5,13 +5,11 @@ TextStyle appBarTitleStyle = const TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w600,
 );
-
 TextStyle homeMenuStyle = const TextStyle(
   fontSize: 18.0,
   color: Colors.black,
   fontWeight: FontWeight.w600,
 );
-
 TextStyle resultTextStyle = const TextStyle(
   fontSize: 14.0,
   color: Colors.black54,
@@ -19,6 +17,11 @@ TextStyle resultTextStyle = const TextStyle(
 );
 TextStyle resultTimeStyle = const TextStyle(
   fontSize: 24.0,
+  color: Colors.black,
+  fontWeight: FontWeight.w600,
+);
+TextStyle resultTileStyle = const TextStyle(
+  fontSize: 20.0,
   color: Colors.black,
   fontWeight: FontWeight.w600,
 );
@@ -33,11 +36,16 @@ TextStyle unselectedTabBarStyle = const TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+TextStyle stInfoStyle = const TextStyle(
+  fontSize: 20.0,
+  color: Colors.white,
+  fontWeight: FontWeight.w400,
+);
 Color primaryBlue = const Color(0xff0064FF);
 
 Map<int, Color> lineColorMap = {
   1: Colors.green,
-  2: Color(0xff0064FF),
+  2: const Color(0xff001E5E),
   3: Colors.brown,
   4: Colors.red,
   5: Colors.blueAccent,

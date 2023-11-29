@@ -17,7 +17,7 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPageState extends State<ResultPage>
     with SingleTickerProviderStateMixin {
-  Map _resultMap = {};
+  Map<String, List> _resultMap = {};
 
   final SearchController _departureSearchController = SearchController();
   final SearchController _arrivalSearchController = SearchController();
@@ -104,6 +104,7 @@ class _ResultPageState extends State<ResultPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(300.0),
         child: AppBar(
@@ -366,9 +367,9 @@ class _ResultPageState extends State<ResultPage>
   }
 
   Column ResultTab({required String type}) {
-    int totalTime = getTotalTime(result: _resultMap[type]);
-    int totalDist = getTotalDist(result: _resultMap[type]);
-    int totalCost = getTotalCost(result: _resultMap[type]);
+    int totalTime = getTotalTime(result: _resultMap[type]!);
+    int totalDist = getTotalDist(result: _resultMap[type]!);
+    int totalCost = getTotalCost(result: _resultMap[type]!);
 
     int minute = totalTime ~/ 60;
     int sec = totalTime % 60;
@@ -379,8 +380,9 @@ class _ResultPageState extends State<ResultPage>
           padding: const EdgeInsets.all(10.0),
           child: Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.black12, width: 1)),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.black12, width: 1),
+            ),
             width: 400,
             height: 130,
             child: Padding(
@@ -420,16 +422,56 @@ class _ResultPageState extends State<ResultPage>
           ),
         ),
         Expanded(
-          child: ListView(
-            children: List.generate(
-              _resultMap[type].length,
-              (index) => ListTile(
-                title: Text((_resultMap[type][index]).toString()),
-              ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: [
+                ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: _resultMap[type]!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _buildResultList(station: _resultMap[type]![index]);
+                  },
+                ),
+              ],
             ),
           ),
         ),
       ],
     );
+  }
+
+  //TODO: 호선 어떻게 지정
+  Widget _buildResultList({required station}) {
+    return Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 20,
+                  height: 160,
+                  color:
+                      lineColorMap[StationInfo.stationMap[station]?.lines[0]],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$station ',
+                        style: resultTileStyle,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),
+          ],
+        ));
   }
 }

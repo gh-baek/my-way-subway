@@ -106,6 +106,8 @@ Map lineInfo = {
   9: [112, 901, 406, 605, 902, 119, 903, 702, 904, 621, 211]
 };
 
+Set bookMarkedSet = {};
+
 class StationInfo {
   static Set stationSet = Set(); // 전체 역 종류
   static List<List> pairList = []; // 역 간 그래프
@@ -113,8 +115,8 @@ class StationInfo {
   static Graph timeGraph = Graph({}); // 역 간 소요 시간 그래프
   static Graph distGraph = Graph({}); // 역 간 거리 그래프
   static Graph costGraph = Graph({}); // 역 간 비용 그래프
-  static List<Station> stationList = [];
-  static Map<int, Station> stationMap = {};
+  static List<Station> stationList = []; //Station List
+  static Map<int, Station> stationMap = {}; //{역번호: Station} 각 역에 대한 Station Map
 }
 
 //역(노드)로 구성된 그래프
@@ -277,7 +279,7 @@ void setStationInfo() async {
 }
 
 // 길 찾기 함수: 파라미터는 departure(출발역)와 arrival(도착역)
-Map findBestWay({required int departure, required int arrival}) {
+Map<String, List> findBestWay({required int departure, required int arrival}) {
   //var output = Dijkstra.findPathFromPairsList(stationInfo.pairList, departure, arrival);
   var timeOutput = Dijkstra.findPathFromGraph(
       StationInfo.timeGraph.nodes, departure, arrival);
