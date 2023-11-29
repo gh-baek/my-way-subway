@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:subway/functions.dart';
 import 'package:subway/pages/map_page.dart';
@@ -122,7 +123,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                         ),
                         onTap: () {
                           if (_currentSt.prevStation[_selectedLine] != null) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => StationInfoPage(
@@ -181,7 +182,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                         ),
                         onTap: () {
                           if (_currentSt.nextStation[_selectedLine] != null) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => StationInfoPage(
@@ -244,6 +245,15 @@ class _StationInfoPageState extends State<StationInfoPage>
         ),
       ),
     );
+  }
+
+  bool _containMap({required targetMap}) {
+    for (var map in bookMarkedList) {
+      if (mapEquals(map, targetMap)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Column _buildStInfo() {
@@ -369,7 +379,10 @@ class _StationInfoPageState extends State<StationInfoPage>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        bookMarkedSet.contains(_currentSt)
+                        _containMap(targetMap: {
+                          'station': _currentSt.station,
+                          'line': _selectedLine
+                        })
                             ? const Icon(
                                 Icons.star,
                                 color: Colors.yellow,
@@ -380,7 +393,10 @@ class _StationInfoPageState extends State<StationInfoPage>
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            bookMarkedSet.contains(_currentSt)
+                            _containMap(targetMap: {
+                              'station': _currentSt.station,
+                              'line': _selectedLine
+                            })
                                 ? '즐겨찾기 해제'
                                 : '즐겨찾기 등록',
                             style: const TextStyle(
@@ -394,9 +410,21 @@ class _StationInfoPageState extends State<StationInfoPage>
                   ),
                 ),
                 onTap: () {
-                  bookMarkedSet.contains(_currentSt)
-                      ? bookMarkedSet.remove(_currentSt)
-                      : bookMarkedSet.add(_currentSt);
+                  print(bookMarkedList);
+
+                  for (var map in bookMarkedList) {
+                    if (mapEquals(map, {
+                      'station': _currentSt.station,
+                      'line': _selectedLine
+                    })) {
+                      bookMarkedList.remove(map);
+                      setState(() {});
+                      return;
+                    }
+                  }
+                  bookMarkedList.add(
+                      {'station': _currentSt.station, 'line': _selectedLine});
+
                   setState(() {});
                 },
               ),

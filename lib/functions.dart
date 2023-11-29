@@ -106,7 +106,9 @@ Map lineInfo = {
   9: [112, 901, 406, 605, 902, 119, 903, 702, 904, 621, 211]
 };
 
-Set bookMarkedSet = {};
+// 즐겨찾기 등록한 Station Set
+// {'station': station num, 'line': line}
+List<Map<String, dynamic>> bookMarkedList = [];
 
 class StationInfo {
   static Set stationSet = Set(); // 전체 역 종류

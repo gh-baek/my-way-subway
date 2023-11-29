@@ -3,26 +3,20 @@ import 'package:subway/functions.dart';
 import 'package:subway/pages/station_info_page.dart';
 import 'package:subway/style.dart';
 
-class SearchStation extends StatefulWidget {
-  const SearchStation({super.key});
+class BookMarkPage extends StatefulWidget {
+  const BookMarkPage({super.key});
 
   @override
-  State<SearchStation> createState() => _SearchStationState();
+  State<BookMarkPage> createState() => _BookMarkPageState();
 }
 
-class _SearchStationState extends State<SearchStation> {
-  final SearchController _searchController = SearchController();
-  String _selectedSt = '';
-
-  //List stationsList = StationInfo.stationSet.toList();
-  List bookmarkList = [101, 403, 202, 404];
-
+class _BookMarkPageState extends State<BookMarkPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(160.0),
+        preferredSize: const Size.fromHeight(150.0),
         child: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
@@ -47,80 +41,11 @@ class _SearchStationState extends State<SearchStation> {
                   ),
                   Center(
                     child: Text(
-                      '역 검색',
+                      '즐겨찾기',
                       style: appBarTitleStyle,
                     ),
                   ),
                 ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    SearchAnchor(
-                      isFullScreen: false,
-                      searchController: _searchController,
-                      builder:
-                          (BuildContext context, SearchController controller) {
-                        return SearchBar(
-                          shape: MaterialStateProperty.all(
-                              const ContinuousRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(25),
-                            ),
-                          )),
-                          onChanged: (input) {
-                            _selectedSt = input;
-                            _searchController.text = input;
-                          },
-                          hintText: _selectedSt,
-                          trailing: [
-                            IconButton(
-                              icon: const Icon(Icons.search),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => StationInfoPage(
-                                              station: _selectedSt,
-                                            )));
-                              },
-                            ),
-                          ],
-                          onTap: () {
-                            print(_searchController.value.text);
-                            _searchController.openView();
-                          },
-                        );
-                      },
-                      suggestionsBuilder: (BuildContext context,
-                          SearchController deptController) {
-                        final keyword = deptController.value.text;
-                        _selectedSt = keyword;
-                        return List.generate(
-                                StationInfo.stationSet.toList().length,
-                                (index) =>
-                                    StationInfo.stationSet.toList()[index])
-                            .where((element) => element
-                                .toString()
-                                .toLowerCase()
-                                .startsWith(keyword.toLowerCase()))
-                            .map(
-                              (item) => ListTile(
-                                title: Text(item.toString()),
-                                onTap: () {
-                                  setState(() {
-                                    _selectedSt = item.toString();
-                                    deptController.closeView(item.toString());
-                                    FocusScope.of(context).unfocus();
-                                  });
-                                },
-                              ),
-                            );
-                      },
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -129,17 +54,34 @@ class _SearchStationState extends State<SearchStation> {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
-          children: [
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemCount: 9,
-              itemBuilder: (BuildContext context, int index) {
-                return _buildLineTile(index + 1);
-              },
-            )
-          ],
+          children: List.generate(
+            bookMarkedList.length,
+            (index) {
+              List<Map<String, dynamic>> bookMarkList = bookMarkedList.toList();
+              return ListTile(
+                  leading: Icon(
+                    Icons.subway_sharp,
+                    color: lineColorMap[bookMarkList[index]['line']],
+                    size: 35,
+                  ),
+                  title: Text(
+                    '${bookMarkList[index]['station']}',
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StationInfoPage(
+                          station: bookMarkList[index]['station'].toString(),
+                          line: bookMarkList[index]['line'],
+                        ),
+                      ),
+                    );
+                  });
+            },
+          ),
         ),
       ),
     );
@@ -164,6 +106,7 @@ class _SearchStationState extends State<SearchStation> {
                   MaterialPageRoute(
                     builder: (context) => StationInfoPage(
                       station: lineInfo[line][index].toString(),
+                      line: line,
                     ),
                   ),
                 );
