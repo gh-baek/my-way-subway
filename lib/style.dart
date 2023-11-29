@@ -12,6 +12,12 @@ TextStyle homeMenuStyle = const TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+TextStyle homeNicknameStyle = const TextStyle(
+  fontSize: 24.0,
+  color: Colors.black,
+  fontWeight: FontWeight.w600,
+);
+
 TextStyle resultTextStyle = const TextStyle(
   fontSize: 14.0,
   color: Colors.black54,

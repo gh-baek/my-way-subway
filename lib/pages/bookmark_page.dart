@@ -3,14 +3,14 @@ import 'package:subway/functions.dart';
 import 'package:subway/pages/station_info_page.dart';
 import 'package:subway/style.dart';
 
-class SearchStation extends StatefulWidget {
-  const SearchStation({super.key});
+class BookmarkPage extends StatefulWidget {
+  const BookmarkPage({super.key});
 
   @override
-  State<SearchStation> createState() => _SearchStationState();
+  State<BookmarkPage> createState() => _BookmarkPageState();
 }
 
-class _SearchStationState extends State<SearchStation> {
+class _BookmarkPageState extends State<BookmarkPage> {
   final SearchController _searchController = SearchController();
   String _selectedSt = '';
 
@@ -47,7 +47,7 @@ class _SearchStationState extends State<SearchStation> {
                   ),
                   Center(
                     child: Text(
-                      '역 검색',
+                      '즐겨찾기 역',
                       style: appBarTitleStyle,
                     ),
                   ),

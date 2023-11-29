@@ -3,7 +3,9 @@ import 'package:subway/functions.dart';
 import 'package:subway/pages/map_page.dart';
 import 'package:subway/pages/result_page.dart';
 import 'package:subway/pages/search_station_page.dart';
+import 'bookmark_page.dart';
 import 'package:subway/style.dart';
+import 'dart:math';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,12 +14,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+List<String> greetings = [
+  '안녕하세요',
+  '좋은 하루 되세요',
+  '즐거운 하루 되세요',
+  '오늘도 힘내세요',
+];
+
 class _HomePageState extends State<HomePage> {
   final SearchController _departureSearchController = SearchController();
   final SearchController _arrivalSearchController = SearchController();
 
   String _selectedDept = '';
   String _selectedArr = '';
+  String inputText = '사용자'; //default
+
+  String greeting = greetings[Random().nextInt(greetings.length)];
 
   // these will be reused later
   final Icon _leading = const Icon(Icons.search);
@@ -35,6 +47,35 @@ class _HomePageState extends State<HomePage> {
     setStationInfo();
     super.initState();
   }
+
+  TextEditingController _textFieldController = TextEditingController();
+  _displayDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog (
+          title: Text('닉네임 입력'),
+          content: TextField(
+            onChanged: (text) {
+              setState(() {
+                inputText = text;
+              });
+            },
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: "예시) 홍길동"),
+          ),
+          actions: <Widget>[
+            new TextButton(
+              child: new Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -241,74 +282,141 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: GestureDetector(
-                    onTapUp: (detail) => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MapPage())),
-                    child: Card(
-                      child: Container(
-                        width: 180,
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            '지하철 노선도',
-                            style: homeMenuStyle,
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                    child: Container(
+                      width: 380,
+                      height: 50,
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Text(
+                              greeting,
+                              textAlign: TextAlign.left,
+                              style: homeNicknameStyle,
+                            ),
+                            Text(
+                              ', $inputText 님',
+                              textAlign: TextAlign.left,
+                              style: homeNicknameStyle,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTapUp: (detail) => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MapPage())),
+                      child: Card(
+                        child: Container(
+                          width: 180,
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              '지하철 노선도',
+                              style: homeMenuStyle,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: GestureDetector(
-                    onTapUp: (detail) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchStation())),
-                    child: Card(
-                      child: Container(
-                        width: 180,
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            '역 검색',
-                            style: homeMenuStyle,
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTapUp: (detail) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchStation())),
+                      child: Card(
+                        child: Container(
+                          width: 180,
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              '역 검색',
+                              style: homeMenuStyle,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: GestureDetector(
-                onTapUp: (detail) => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MapPage())),
-                child: Card(
-                  child: Container(
-                    width: 380,
-                    height: 120,
-                    child: Center(
-                      child: Text(
-                        '즐겨찾기',
-                        style: homeMenuStyle,
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTapUp: (detail) => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => BookmarkPage())),
+                  child: Card(
+                    child: Container(
+                      width: 380,
+                      height: 120,
+                      child: Center(
+                        child: Text(
+                          '즐겨찾기',
+                          style: homeMenuStyle,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTapUp: (detail) => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MapPage())),
+                      child: Card(
+                        child: Container(
+                          width: 180,
+                          height: 80,
+                          child: Center(
+                            child: Text(
+                              '신고',
+                              style: homeMenuStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTap: () => _displayDialog(context),
+                      child: Card(
+                        child: Container(
+                          width: 180,
+                          height: 80,
+                          child: Center(
+                            child: Text(
+                              '닉네임 설정',
+                              style: homeMenuStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 }
