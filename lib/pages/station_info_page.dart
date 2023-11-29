@@ -23,42 +23,40 @@ class _StationInfoPageState extends State<StationInfoPage>
   void initState() {
     _selectedLine = widget.line;
     _currentSt = StationInfo.stationMap[int.parse(widget.station)]!;
-    _tabController = TabController(length: 2, vsync: this);
+    int initialIndex;
+
+    if (_currentSt.lines[0] == widget.line) {
+      initialIndex = 0;
+    } else {
+      initialIndex = 1;
+    }
+    _tabController = TabController(
+        initialIndex: initialIndex,
+        length: _currentSt.lines.length,
+        vsync: this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _tabs = [
-      Tab(
+    List<Widget> tabs = [];
+    for (var line in _currentSt.lines) {
+      tabs.add(Tab(
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                  color: lineColorMap[_currentSt.lines[0]]!, width: 1)),
+              border: Border.all(color: lineColorMap[line]!, width: 1)),
           child: Align(
             alignment: Alignment.center,
             child: Text(
-              "${_currentSt.lines[0]}호선",
+              "${line}호선",
+              style: TextStyle(fontSize: 18.0),
             ),
           ),
         ),
-      ),
-      Tab(
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                  color: lineColorMap[_currentSt.lines[1]]!, width: 1)),
-          child: Align(
-            alignment: Alignment.center,
-            child: Text(
-              "${_currentSt.lines[1]}호선",
-            ),
-          ),
-        ),
-      ),
-    ];
+      ));
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -128,7 +126,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                               context,
                               MaterialPageRoute(
                                 builder: (context) => StationInfoPage(
-                                  station: _currentSt.prevStation[widget.line]
+                                  station: _currentSt.prevStation[_selectedLine]
                                       .toString(),
                                   line: _selectedLine,
                                 ),
@@ -220,6 +218,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                   } else {
                     _selectedLine = _currentSt.lines[0];
                   }
+
                   setState(() {});
                 },
                 controller: _tabController,
@@ -231,16 +230,14 @@ class _StationInfoPageState extends State<StationInfoPage>
                   borderRadius: BorderRadius.circular(10),
                   color: lineColorMap[_selectedLine],
                 ),
-                tabs: _tabs,
+                tabs: tabs,
               ),
             ),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  _buildStInfo(),
-                  _buildStInfo(),
-                ],
+                children: List.generate(
+                    _currentSt.lines.length, (index) => _buildStInfo()),
               ),
             ),
           ],
