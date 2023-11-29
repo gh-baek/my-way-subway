@@ -114,6 +114,7 @@ class StationInfo {
   static Graph distGraph = Graph({}); // 역 간 거리 그래프
   static Graph costGraph = Graph({}); // 역 간 비용 그래프
   static List<Station> stationList = [];
+  static Map<int, Station> stationMap = {};
 }
 
 //역(노드)로 구성된 그래프
@@ -177,6 +178,7 @@ void setStationList() {
 
     StationInfo.stationList[i].prevStation = prevSt;
     StationInfo.stationList[i].nextStation = nextSt;
+    StationInfo.stationMap[st.station] = StationInfo.stationList[i];
   }
 }
 
@@ -227,6 +229,8 @@ void setStationInfo() async {
     Map<dynamic, Map> distNodes = {};
     Map<dynamic, Map> costNodes = {};
 
+    setStationList();
+
     //역 간 소요 시간에 대한 timeGraph 생성 for문
     for (var st in StationInfo.stationSet) {
       Map data = {};
@@ -270,8 +274,6 @@ void setStationInfo() async {
     }
     StationInfo.costGraph = Graph(costNodes);
   }
-
-  setStationList();
 }
 
 // 길 찾기 함수: 파라미터는 departure(출발역)와 arrival(도착역)
@@ -293,3 +295,5 @@ Map findBestWay({required int departure, required int arrival}) {
 
   return {'time': timeOutput, 'dist': distOutput, 'cost': costOutput};
 }
+
+//BFS 알고리즘 적용한 최소 환승 길찾기 함수
