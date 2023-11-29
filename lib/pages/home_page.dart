@@ -38,10 +38,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadiusGeometry radius = const BorderRadius.only(
-      topLeft: Radius.circular(24.0),
-      topRight: Radius.circular(24.0),
-    );
+    DateTime dt = DateTime.now();
+    String timeText = '';
+    if (dt.hour >= 5 && dt.hour < 12) {
+      timeText = "좋은 아침 입니다";
+    } else if (dt.hour >= 12 && dt.hour < 6) {
+      timeText = "활기찬 오후 입니다";
+    } else if (dt.hour >= 6 && dt.hour < 10) {
+      timeText = "즐거운 저녁 입니다";
+    } else {
+      timeText = "좋은 밤 되세요";
+    }
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
@@ -76,11 +83,11 @@ class _HomePageState extends State<HomePage> {
                           return SearchBar(
                             shape: MaterialStateProperty.all(
                                 const ContinuousRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(75),
-                                topRight: Radius.circular(75),
-                              ),
-                            )),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(75),
+                                    topRight: Radius.circular(75),
+                                  ),
+                                )),
                             onChanged: (input) {
                               _selectedDept = input;
                               _departureSearchController.text = input;
@@ -112,43 +119,50 @@ class _HomePageState extends State<HomePage> {
                           _selectedDept = keyword;
                           return keyword.toString() != ''
                               ? List.generate(
-                                      StationInfo.stationSet.toList().length,
-                                      (index) => StationInfo.stationSet
-                                          .toList()[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedDept = item.toString();
-                                          deptController
-                                              .closeView(item.toString());
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  )
+                              StationInfo.stationSet
+                                  .toList()
+                                  .length,
+                                  (index) =>
+                              StationInfo.stationSet
+                                  .toList()[index])
+                              .where((element) =>
+                              element
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(keyword.toLowerCase()))
+                              .map(
+                                (item) =>
+                                ListTile(
+                                  title: Text(item.toString()),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedDept = item.toString();
+                                      deptController
+                                          .closeView(item.toString());
+                                      FocusScope.of(context).unfocus();
+                                    });
+                                  },
+                                ),
+                          )
                               : List.generate(
-                                      5, (index) => _recentSearch[index])
-                                  .where((element) => element
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedDept = item.toString();
-                                          deptController.closeView(item);
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  );
+                              5, (index) => _recentSearch[index])
+                              .where((element) =>
+                              element
+                                  .toLowerCase()
+                                  .startsWith(keyword.toLowerCase()))
+                              .map(
+                                (item) =>
+                                ListTile(
+                                  title: Text(item.toString()),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedDept = item.toString();
+                                      deptController.closeView(item);
+                                      FocusScope.of(context).unfocus();
+                                    });
+                                  },
+                                ),
+                          );
                         },
                       ),
                       SearchAnchor(
@@ -159,11 +173,11 @@ class _HomePageState extends State<HomePage> {
                           return SearchBar(
                             shape: MaterialStateProperty.all(
                                 const ContinuousRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(75),
-                                bottomRight: Radius.circular(75),
-                              ),
-                            )),
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(75),
+                                    bottomRight: Radius.circular(75),
+                                  ),
+                                )),
                             onChanged: (input) {
                               _selectedArr = input;
                               _arrivalSearchController.text = input;
@@ -176,7 +190,8 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ResultPage(
+                                          builder: (context) =>
+                                              ResultPage(
                                                 departure: _selectedDept,
                                                 arrival: _selectedArr,
                                               )));
@@ -194,44 +209,51 @@ class _HomePageState extends State<HomePage> {
                           _selectedArr = keyword;
                           return keyword.toString() != ''
                               ? List.generate(
-                                      StationInfo.stationSet.toList().length,
-                                      (index) => StationInfo.stationSet
-                                          .toList()[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedArr = item.toString();
-                                          arrController
-                                              .closeView(item.toString());
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  )
+                              StationInfo.stationSet
+                                  .toList()
+                                  .length,
+                                  (index) =>
+                              StationInfo.stationSet
+                                  .toList()[index])
+                              .where((element) =>
+                              element
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(keyword.toLowerCase()))
+                              .map(
+                                (item) =>
+                                ListTile(
+                                  title: Text(item.toString()),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedArr = item.toString();
+                                      arrController
+                                          .closeView(item.toString());
+                                      FocusScope.of(context).unfocus();
+                                    });
+                                  },
+                                ),
+                          )
                               : List.generate(
-                                      5, (index) => _recentSearch[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedArr = item.toString();
-                                          arrController.closeView(item);
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  );
+                              5, (index) => _recentSearch[index])
+                              .where((element) =>
+                              element
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(keyword.toLowerCase()))
+                              .map(
+                                (item) =>
+                                ListTile(
+                                  title: Text(item.toString()),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedArr = item.toString();
+                                      arrController.closeView(item);
+                                      FocusScope.of(context).unfocus();
+                                    });
+                                  },
+                                ),
+                          );
                         },
                       ),
                     ],
@@ -242,44 +264,83 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Row(
+            Padding(
+
+              padding: const EdgeInsets.all(40.0),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  timeText,
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: GestureDetector(
-                    onTapUp: (detail) => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MapPage())),
-                    child: Card(
-                      child: Container(
-                        width: 180,
-                        height: 200,
-                        child: Center(
-                          child: Text(
-                            '지하철 노선도',
-                            style: homeMenuStyle,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: GestureDetector(
+                        onTapUp: (detail) =>
+                            Navigator.push(context,
+                                MaterialPageRoute(
+                                    builder: (context) => MapPage())),
+                        child: Card(
+                          child: Container(
+                            width: 180,
+                            height: 200,
+                            child: Center(
+                              child: Text(
+                                '지하철 노선도',
+                                style: homeMenuStyle,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: GestureDetector(
+                        onTapUp: (detail) =>
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchStation())),
+                        child: Card(
+                          child: Container(
+                            width: 180,
+                            height: 200,
+                            child: Center(
+                              child: Text(
+                                '역 검색',
+                                style: homeMenuStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: GestureDetector(
-                    onTapUp: (detail) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchStation())),
+                    onTapUp: (detail) =>
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => MapPage())),
                     child: Card(
                       child: Container(
-                        width: 180,
-                        height: 200,
+                        width: 380,
+                        height: 120,
                         child: Center(
                           child: Text(
-                            '역 검색',
+                            '즐겨찾기',
                             style: homeMenuStyle,
                           ),
                         ),
@@ -288,25 +349,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: GestureDetector(
-                onTapUp: (detail) => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MapPage())),
-                child: Card(
-                  child: Container(
-                    width: 380,
-                    height: 120,
-                    child: Center(
-                      child: Text(
-                        '즐겨찾기',
-                        style: homeMenuStyle,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ));
