@@ -450,13 +450,34 @@ class _StationInfoPageState extends State<StationInfoPage>
     );
   }
 
+  String _getCongestion() {
+    DateTime dt = DateTime.now();
+    int index = (dt.hour - 5);
+    double currentCong = 0.0;
+    if (index >= 0) {
+      currentCong =
+          StationInfo.congestionMap[_selectedLine][_currentSt.station][index];
+    }
+
+    String congState = 'zzz';
+    if (currentCong >= 0 && currentCong < 35) {
+      congState = '쾌적';
+    } else if (currentCong >= 35 && currentCong < 70) {
+      congState = '양호';
+    } else if (currentCong >= 70) {
+      congState = '혼잡';
+    }
+    return congState;
+  }
+
   Column _buildCongestionInfo() {
+    String congState = _getCongestion();
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
+        const Padding(
+          padding: EdgeInsets.all(10.0),
           child: Text(
             '역 내 혼잡도',
             style: TextStyle(
@@ -470,14 +491,10 @@ class _StationInfoPageState extends State<StationInfoPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Icon(
-                Icons.tag_faces,
-                size: 75.0,
-                color: Colors.green,
-              ),
+              _buildCongIcon(congState: congState),
               Column(
                 children: [
-                  Text(
+                  const Text(
                     '현재 시간대는',
                     style: TextStyle(
                       fontSize: 16.0,
@@ -487,13 +504,13 @@ class _StationInfoPageState extends State<StationInfoPage>
                   Row(
                     children: [
                       Text(
-                        '여유',
-                        style: TextStyle(
+                        congState,
+                        style: const TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
+                      const Text(
                         '입니다',
                         style: TextStyle(
                           fontSize: 16.0,
@@ -509,5 +526,39 @@ class _StationInfoPageState extends State<StationInfoPage>
         ),
       ],
     );
+  }
+
+  Icon _buildCongIcon({required String congState}) {
+    switch (congState) {
+      case 'zzz':
+        return const Icon(
+          Icons.hotel_sharp,
+          size: 75.0,
+        );
+      case '쾌적':
+        return const Icon(
+          Icons.mood_outlined,
+          size: 75.0,
+          color: Colors.green,
+        );
+      case '양호':
+        return const Icon(
+          Icons.sentiment_neutral_outlined,
+          size: 75.0,
+          color: Colors.orange,
+        );
+      case '혼잡':
+        return const Icon(
+          Icons.mood_bad_outlined,
+          size: 75.0,
+          color: Colors.redAccent,
+        );
+
+      default:
+        return const Icon(
+          Icons.do_not_disturb_on_total_silence_rounded,
+          size: 75.0,
+        );
+    }
   }
 }
