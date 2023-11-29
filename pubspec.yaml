@@ -32,6 +32,7 @@ flutter:
     - lib/assets/images/map.png
     - lib/assets/images/MyWay.png
     - lib/data/stations.xlsx
+    - lib/data/congestion.xlsx
 
 
   fonts:

@@ -119,6 +119,17 @@ class StationInfo {
   static Graph costGraph = Graph({}); // 역 간 비용 그래프
   static List<Station> stationList = []; //Station List
   static Map<int, Station> stationMap = {}; //{역번호: Station} 각 역에 대한 Station Map
+  static Map congestionMap = {
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+    7: {},
+    8: {},
+    9: {},
+  };
 }
 
 //역(노드)로 구성된 그래프
@@ -233,8 +244,6 @@ void setStationInfo() async {
     Map<dynamic, Map> distNodes = {};
     Map<dynamic, Map> costNodes = {};
 
-    setStationList();
-
     //역 간 소요 시간에 대한 timeGraph 생성 for문
     for (var st in StationInfo.stationSet) {
       Map data = {};
@@ -277,6 +286,39 @@ void setStationInfo() async {
       costNodes[st] = data;
     }
     StationInfo.costGraph = Graph(costNodes);
+  }
+
+  setStationList();
+  setCongestionInfo();
+}
+
+void setCongestionInfo() async {
+  ByteData data = await rootBundle.load("lib/data/congestion.xlsx");
+  List<int> bytes =
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  var excel = Excel.decodeBytes(bytes);
+
+  for (var table in excel.tables.keys) {
+    // print(table); //sheet Name
+    // print(excel.tables[table]?.maxCols);
+    // print(excel.tables[table]?.maxRows);
+
+    int maxRows = excel.tables[table]!.maxRows; //엑셀에 저장된 행(거리, 비용, 시간 역간 정보) 개수
+    int maxCols =
+        excel.tables[table]!.maxColumns; //엑셀에 저장된 행(거리, 비용, 시간 역간 정보) 개수
+    int line = 0;
+
+    for (var i = 1; i < maxRows; i++) {
+      line = excel.tables[table]?.rows[i][0]!.value;
+
+      List congestions = [];
+      int station = excel.tables[table]?.rows[i][1]!.value;
+
+      for (var j = 2; j < maxCols; j++) {
+        congestions.add(excel.tables[table]?.rows[i][j]!.value);
+      }
+      StationInfo.congestionMap[line][station] = congestions;
+    }
   }
 }
 

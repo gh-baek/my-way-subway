@@ -443,64 +443,68 @@ class _StationInfoPageState extends State<StationInfoPage>
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: Colors.black12, width: 1),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    '역 내 혼잡도',
+            child: _buildCongestionInfo(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column _buildCongestionInfo() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            '역 내 혼잡도',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(
+                Icons.tag_faces,
+                size: 75.0,
+                color: Colors.green,
+              ),
+              Column(
+                children: [
+                  Text(
+                    '현재 시간대는',
                     style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Row(
                     children: [
-                      Icon(
-                        Icons.tag_faces,
-                        size: 75.0,
-                        color: Colors.green,
+                      Text(
+                        '여유',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            '현재 시간대는',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '여유',
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                '입니다',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
+                      Text(
+                        '입니다',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ],
-            ),
+                  )
+                ],
+              ),
+            ],
           ),
         ),
       ],
