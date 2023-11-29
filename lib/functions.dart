@@ -286,12 +286,12 @@ Map findBestWay({required int departure, required int arrival}) {
   var costOutput = Dijkstra.findPathFromGraph(
       StationInfo.costGraph.nodes, departure, arrival);
 
-  print("best time output:");
-  print(timeOutput);
-  print("best distance output:");
-  print(distOutput);
-  print("best cost output:");
-  print(costOutput);
+  // print("best time output:");
+  // print(timeOutput);
+  // print("best distance output:");
+  // print(distOutput);
+  // print("best cost output:");
+  // print(costOutput);
 
   return {'time': timeOutput, 'dist': distOutput, 'cost': costOutput};
 }

@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         primarySwatch: Colors.blue,
         useMaterial3: true,
+        cardColor: Colors.white,
       ),
       home: const HomePage(),
     );

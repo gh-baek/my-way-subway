@@ -3,6 +3,7 @@ import 'package:subway/functions.dart';
 import 'package:subway/pages/map_page.dart';
 import 'package:subway/pages/result_page.dart';
 import 'package:subway/pages/search_station_page.dart';
+import 'package:subway/style.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       onPressed: () {},
     ),
   ];
-  List _recentSearch = ['101', '102', '104', '121', '124'];
+  List _recentSearch = ['101', '102', '104', '121', '306'];
 
   @override
   void initState() {
@@ -42,10 +43,11 @@ class _HomePageState extends State<HomePage> {
       topRight: Radius.circular(24.0),
     );
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(300.0),
           child: AppBar(
-            backgroundColor: Color(0xff0064FF),
+            backgroundColor: primaryBlue,
             toolbarHeight: 300,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
@@ -55,7 +57,10 @@ class _HomePageState extends State<HomePage> {
             title: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('MY WAY'),
+                Text(
+                  'MY WAY',
+                  style: appBarTitleStyle,
+                ),
                 SizedBox(
                   height: 30,
                 ),
@@ -252,7 +257,10 @@ class _HomePageState extends State<HomePage> {
                         width: 180,
                         height: 200,
                         child: Center(
-                          child: Text('지하철 노선도'),
+                          child: Text(
+                            '지하철 노선도',
+                            style: homeMenuStyle,
+                          ),
                         ),
                       ),
                     ),
@@ -270,7 +278,10 @@ class _HomePageState extends State<HomePage> {
                         width: 180,
                         height: 200,
                         child: Center(
-                          child: Text('역 검색'),
+                          child: Text(
+                            '역 검색',
+                            style: homeMenuStyle,
+                          ),
                         ),
                       ),
                     ),
@@ -288,7 +299,10 @@ class _HomePageState extends State<HomePage> {
                     width: 380,
                     height: 120,
                     child: Center(
-                      child: Text('즐겨찾기'),
+                      child: Text(
+                        '즐겨찾기',
+                        style: homeMenuStyle,
+                      ),
                     ),
                   ),
                 ),
@@ -298,3 +312,5 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 }
+
+//TODO: 없는 역 검색 시, 역 아닌 것 검색 시, ...
