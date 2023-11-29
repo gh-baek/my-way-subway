@@ -82,7 +82,7 @@ void main() {
       return []; // 목적지까지 경로를 찾을 수 없는 경우 빈 리스트 반환
     }
 
-    int startStation = 103;
+    int startStation = 102;
     int destinationStation = 306;
 
     List minimumTransferRoute =
@@ -93,5 +93,10 @@ void main() {
     } else {
       print('최소 환승 루트: $minimumTransferRoute');
     }
+
+    print(StationInfo.stationList[0].station);
+    print(StationInfo.stationList[0].lines);
+    print(StationInfo.stationList[0].nextStation);
+    print(StationInfo.stationList[0].prevStation);
   });
 }

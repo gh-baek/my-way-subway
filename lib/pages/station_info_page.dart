@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:subway/functions.dart';
+import 'package:subway/style.dart';
 
 class StationInfoPage extends StatefulWidget {
   final String station;
@@ -10,12 +12,9 @@ class StationInfoPage extends StatefulWidget {
 }
 
 class _StationInfoPageState extends State<StationInfoPage> {
-  MaterialColor _barColor = Colors.green;
-
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
   }
 
@@ -23,7 +22,7 @@ class _StationInfoPageState extends State<StationInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _barColor,
+        backgroundColor: lineColorMap[StationInfo.stationList[2].lines[0]],
         title: Text('역 정보'),
       ),
       body: Column(
@@ -33,7 +32,7 @@ class _StationInfoPageState extends State<StationInfoPage> {
             width: double.infinity,
             height: 100,
             decoration: BoxDecoration(
-              color: _barColor,
+              color: lineColorMap[StationInfo.stationList[2].lines[0]],
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(50),
                 bottomRight: Radius.circular(50),

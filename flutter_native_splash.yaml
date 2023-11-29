@@ -1,12 +1,12 @@
 flutter_native_splash:
-  color: "6C97E7"
+  color: "#0064FF"
   fullscreen: true
   image: lib/assets/images/MyWay.png
   android: true
   ios: true
 
   android_12:
-    icon_background_color: "#6C97E7"
+    icon_background_color: "#0064FF"
     image_dark: lib/assets/images/MyWay.png
     color_dark: "#042a49"
     icon_background_color_dark: "#eeeeee"

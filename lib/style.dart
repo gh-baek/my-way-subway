@@ -37,7 +37,7 @@ Color primaryBlue = const Color(0xff0064FF);
 
 Map<int, Color> lineColorMap = {
   1: Colors.green,
-  2: Colors.black,
+  2: Color(0xff0064FF),
   3: Colors.brown,
   4: Colors.red,
   5: Colors.blueAccent,
