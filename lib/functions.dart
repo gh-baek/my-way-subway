@@ -315,7 +315,7 @@ void setCongestionInfo() async {
       int station = excel.tables[table]?.rows[i][1]!.value;
 
       for (var j = 2; j < maxCols; j++) {
-        congestions.add(excel.tables[table]?.rows[i][j]!.value);
+        congestions.add(excel.tables[table]?.rows[i][j]!.value.toDouble());
       }
       StationInfo.congestionMap[line][station] = congestions;
     }
