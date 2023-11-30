@@ -274,13 +274,23 @@ class _HomePageState extends State<HomePage> {
                         onTapUp: (detail) => Navigator.push(context,
                             MaterialPageRoute(builder: (context) => MapPage())),
                         child: Card(
+                          clipBehavior: Clip.antiAlias,
                           child: Container(
                             width: 180,
                             height: 200,
                             child: Center(
-                              child: Text(
-                                '지하철 노선도',
-                                style: homeMenuStyle,
+                              child: Stack(
+                                children: [
+                                  const Image(
+                                      image: AssetImage(
+                                          'lib/assets/images/subwayline.png')),
+                                  Center(
+                                    child: Text(
+                                      '지하철 노선도',
+                                      style: homeMenuStyle,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

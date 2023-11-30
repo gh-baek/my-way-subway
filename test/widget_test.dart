@@ -93,7 +93,13 @@ void main() {
     // }
     int line = 1;
     timeInterval[line];
-    List firstTimeTable;
-    for(;lineInfo[line];)
+    List firstTimeTable = {line,};
+
+    for (var st in lineInfo[line]!) {
+      Map stTimeMap;
+      List time = [];
+      time.add();
+      firstTimeTable.add()
+    }
   });
 }

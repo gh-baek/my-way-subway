@@ -21,7 +21,8 @@ Map timeInterval = {
 
 Map timeTable = {};
 
-Map lineInfo = {
+// {호선: [해당 호선에 포함된 역], ...}
+Map<int, List<int>> lineInfo = {
   1: [
     101,
     102,
@@ -198,11 +199,11 @@ void setStationList() {
       if (pair.contains(st.station)) {
         for (var line in st.lines) {
           if (st.station == pair[0]) {
-            if (lineInfo[line].contains(pair[1])) {
+            if (lineInfo[line]!.contains(pair[1])) {
               nextSt[line] = pair[1];
             }
           } else {
-            if (lineInfo[line].contains(pair[0])) {
+            if (lineInfo[line]!.contains(pair[0])) {
               prevSt[line] = pair[0];
             }
           }

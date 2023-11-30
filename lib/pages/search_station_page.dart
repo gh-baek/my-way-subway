@@ -159,19 +159,19 @@ class _SearchStationState extends State<SearchStation> {
           size: 35,
         ),
         title: Text(
-          '${line}호선',
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
+          '$line호선',
+          style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
         ),
         children: List.generate(
-          lineInfo[line].length,
+          lineInfo[line]!.length,
           (index) => ListTile(
-              title: Text(lineInfo[line][index].toString()),
+              title: Text(lineInfo[line]![index].toString()),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => StationInfoPage(
-                      station: lineInfo[line][index].toString(),
+                      station: lineInfo[line]![index].toString(),
                       line: line,
                     ),
                   ),
