@@ -251,6 +251,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                   ),
                   Expanded(
                     child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: List.generate(
                           _currentSt.lines.length, (index) => _buildStInfo()),
@@ -434,7 +435,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                     for (var map in bookMarkList) {
                       if (mapEquals(map, {
                         'station': _currentSt.station,
-                        'line': _selectedLine
+                        'line': _selectedLine,
                       })) {
                         setState(() {
                           bookMarkList.remove(map);
@@ -444,8 +445,6 @@ class _StationInfoPageState extends State<StationInfoPage>
                           if (prefs.containsKey('bookMarkList')) {
                             prefs.remove('bookMarkList');
                           }
-                          print('in');
-                          print(strList);
                           prefs.setStringList('bookMarkList', strList);
                         });
                         return;

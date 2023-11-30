@@ -80,7 +80,7 @@ class _BookMarkPageState extends State<BookMarkPage> {
                         ),
                         title: Text(
                           '${bookmarks[index]['station']}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20.0, fontWeight: FontWeight.w500),
                         ),
                         onTap: () {
@@ -92,7 +92,7 @@ class _BookMarkPageState extends State<BookMarkPage> {
                                 line: bookmarks[index]['line'],
                               ),
                             ),
-                          );
+                          ).then((value) => setState(() {}));
                         });
                   },
                 ),

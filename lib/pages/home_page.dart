@@ -48,8 +48,13 @@ class _HomePageState extends State<HomePage> {
     }
     if (prefs.containsKey('bookMarkList')) {
       List<String> savedStrList = prefs.getStringList('bookMarkList')!;
-      bookMarkList = savedStrList.map((i) => json.decode(i)).toList();
-      print(savedStrList);
+      List markedList = savedStrList.map((i) => json.decode(i)).toList();
+
+      for (var i = 0; i < markedList.length; i++) {
+        int station = markedList[i]['station'] as int;
+        int line = markedList[i]['line'] as int;
+        bookMarkList.add({'station': station, 'line': line});
+      }
     }
     return prefs.toString();
   }
@@ -113,11 +118,11 @@ class _HomePageState extends State<HomePage> {
                                   return SearchBar(
                                     shape: MaterialStateProperty.all(
                                         const ContinuousRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(75),
-                                        topRight: Radius.circular(75),
-                                      ),
-                                    )),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(75),
+                                            topRight: Radius.circular(75),
+                                          ),
+                                        )),
                                     onChanged: (input) {
                                       _selectedDept = input;
                                       _departureSearchController.text = input;
@@ -151,52 +156,59 @@ class _HomePageState extends State<HomePage> {
                                   _selectedDept = keyword;
                                   return keyword.toString() != ''
                                       ? List.generate(
-                                              StationInfo.stationSet
-                                                  .toList()
-                                                  .length,
-                                              (index) => StationInfo.stationSet.toList()[index])
-                                          .where((element) => element
-                                              .toString()
-                                              .toLowerCase()
-                                              .startsWith(keyword
-                                                  .toString()
-                                                  .toLowerCase()))
-                                          .map(
-                                            (item) => ListTile(
-                                              title: Text(item.toString()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedDept =
-                                                      item.toString();
-                                                  deptController.closeView(
-                                                      item.toString());
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                });
-                                              },
-                                            ),
-                                          )
+                                      StationInfo.stationSet
+                                          .toList()
+                                          .length,
+                                          (index) =>
+                                      StationInfo.stationSet.toList()[index])
+                                      .where((element) =>
+                                      element
+                                          .toString()
+                                          .toLowerCase()
+                                          .startsWith(keyword
+                                          .toString()
+                                          .toLowerCase()))
+                                      .map(
+                                        (item) =>
+                                        ListTile(
+                                          title: Text(item.toString()),
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedDept =
+                                                  item.toString();
+                                              deptController.closeView(
+                                                  item.toString());
+                                              FocusScope.of(context)
+                                                  .unfocus();
+                                            });
+                                          },
+                                        ),
+                                  )
                                       : List.generate(recentSearchQueue.length,
-                                              (index) => recentSearchQueue.toList()[index])
-                                          .where((element) => element
-                                              .toString()
-                                              .toLowerCase()
-                                              .startsWith(keyword.toString().toLowerCase()))
-                                          .map(
-                                            (item) => ListTile(
-                                              title: Text(item.toString()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedDept =
-                                                      item.toString();
-                                                  deptController.closeView(
-                                                      item.toString());
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                });
-                                              },
-                                            ),
-                                          );
+                                          (index) =>
+                                      recentSearchQueue.toList()[index])
+                                      .where((element) =>
+                                      element
+                                          .toString()
+                                          .toLowerCase()
+                                          .startsWith(
+                                          keyword.toString().toLowerCase()))
+                                      .map(
+                                        (item) =>
+                                        ListTile(
+                                          title: Text(item.toString()),
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedDept =
+                                                  item.toString();
+                                              deptController.closeView(
+                                                  item.toString());
+                                              FocusScope.of(context)
+                                                  .unfocus();
+                                            });
+                                          },
+                                        ),
+                                  );
                                 },
                               ),
                               SearchAnchor(
@@ -207,11 +219,11 @@ class _HomePageState extends State<HomePage> {
                                   return SearchBar(
                                     shape: MaterialStateProperty.all(
                                         const ContinuousRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(75),
-                                        bottomRight: Radius.circular(75),
-                                      ),
-                                    )),
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(75),
+                                            bottomRight: Radius.circular(75),
+                                          ),
+                                        )),
                                     onChanged: (input) {
                                       _selectedArr = input;
                                       _arrivalSearchController.text = input;
@@ -222,7 +234,7 @@ class _HomePageState extends State<HomePage> {
                                         icon: const Icon(Icons.search),
                                         onPressed: () {
                                           if (StationInfo.stationSet.contains(
-                                                  int.parse(_selectedDept)) &&
+                                              int.parse(_selectedDept)) &&
                                               StationInfo.stationSet.contains(
                                                   int.parse(_selectedArr))) {
                                             if (recentSearchQueue.length >=
@@ -234,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                                 .add(_selectedDept);
                                             recentSearchQueue.add(_selectedArr);
                                             var origList =
-                                                recentSearchQueue.toList();
+                                            recentSearchQueue.toList();
                                             List<String> strList = origList
                                                 .map((i) => i.toString())
                                                 .toList();
@@ -251,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                                                     builder: (context) =>
                                                         ResultPage(
                                                           departure:
-                                                              _selectedDept,
+                                                          _selectedDept,
                                                           arrival: _selectedArr,
                                                         )));
                                           } else {
@@ -260,12 +272,12 @@ class _HomePageState extends State<HomePage> {
                                               //없는 역, 역이 아닌 것을 검색 시 오류 메세지 출력
                                               SnackBar(
                                                 backgroundColor:
-                                                    Colors.redAccent,
+                                                Colors.redAccent,
                                                 content: const Text(
                                                   '해당 역이 존재하지 않습니다.',
                                                 ),
                                                 duration:
-                                                    const Duration(seconds: 3),
+                                                const Duration(seconds: 3),
                                                 action: SnackBarAction(
                                                   label: 'X',
                                                   textColor: Colors.white,
@@ -288,52 +300,58 @@ class _HomePageState extends State<HomePage> {
                                   _selectedArr = keyword;
                                   return keyword.toString() != ''
                                       ? List.generate(
-                                              StationInfo.stationSet
-                                                  .toList()
-                                                  .length,
-                                              (index) => StationInfo.stationSet.toList()[index])
-                                          .where((element) => element
-                                              .toString()
-                                              .toLowerCase()
-                                              .startsWith(keyword
-                                                  .toString()
-                                                  .toLowerCase()))
-                                          .map(
-                                            (item) => ListTile(
-                                              title: Text(item.toString()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedArr =
-                                                      item.toString();
-                                                  arrController.closeView(
-                                                      item.toString());
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                });
-                                              },
-                                            ),
-                                          )
+                                      StationInfo.stationSet
+                                          .toList()
+                                          .length,
+                                          (index) =>
+                                      StationInfo.stationSet.toList()[index])
+                                      .where((element) =>
+                                      element
+                                          .toString()
+                                          .toLowerCase()
+                                          .startsWith(keyword
+                                          .toString()
+                                          .toLowerCase()))
+                                      .map(
+                                        (item) =>
+                                        ListTile(
+                                          title: Text(item.toString()),
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedArr =
+                                                  item.toString();
+                                              arrController.closeView(
+                                                  item.toString());
+                                              FocusScope.of(context)
+                                                  .unfocus();
+                                            });
+                                          },
+                                        ),
+                                  )
                                       : List.generate(recentSearchQueue.length,
-                                              (index) => recentSearchQueue.toList()[index])
-                                          .where((element) => element
-                                              .toString()
-                                              .toLowerCase()
-                                              .startsWith(keyword.toLowerCase()))
-                                          .map(
-                                            (item) => ListTile(
-                                              title: Text(item.toString()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedArr =
-                                                      item.toString();
-                                                  arrController.closeView(
-                                                      item.toString());
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                });
-                                              },
-                                            ),
-                                          );
+                                          (index) =>
+                                      recentSearchQueue.toList()[index])
+                                      .where((element) =>
+                                      element
+                                          .toString()
+                                          .toLowerCase()
+                                          .startsWith(keyword.toLowerCase()))
+                                      .map(
+                                        (item) =>
+                                        ListTile(
+                                          title: Text(item.toString()),
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedArr =
+                                                  item.toString();
+                                              arrController.closeView(
+                                                  item.toString());
+                                              FocusScope.of(context)
+                                                  .unfocus();
+                                            });
+                                          },
+                                        ),
+                                  );
                                 },
                               ),
                             ],
@@ -366,10 +384,12 @@ class _HomePageState extends State<HomePage> {
                             Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: GestureDetector(
-                                onTapUp: (detail) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const MapPage())),
+                                onTapUp: (detail) =>
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (
+                                                context) => const MapPage())),
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   child: SizedBox(
@@ -397,10 +417,11 @@ class _HomePageState extends State<HomePage> {
                             Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: GestureDetector(
-                                onTapUp: (detail) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
+                                onTapUp: (detail) =>
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
                                             const SearchStation())),
                                 child: Card(
                                   child: SizedBox(
@@ -421,10 +442,11 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
-                            onTapUp: (detail) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                            onTapUp: (detail) =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const BookMarkPage())),
                             child: Card(
                               child: SizedBox(

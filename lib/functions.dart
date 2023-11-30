@@ -130,7 +130,7 @@ Map<int, List<int>> lineInfo = {
 
 // 즐겨찾기 등록한 Station Set
 // {'station': station num, 'line': line}
-List bookMarkList = [];
+List<Map<String, int>> bookMarkList = [];
 
 //최근 검색한 역 큐 구조로 저장
 //화면에 보여지는 것 고려하여, 개수는 10개로 제한
