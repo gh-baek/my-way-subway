@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:subway/functions.dart';
 import 'package:subway/pages/station_info_page.dart';
 import 'package:subway/style.dart';
@@ -11,6 +12,15 @@ class BookMarkPage extends StatefulWidget {
 }
 
 class _BookMarkPageState extends State<BookMarkPage> {
+  late SharedPreferences prefs;
+
+  Future<String> _setInit() async {
+    prefs = await SharedPreferences.getInstance();
+    print(bookMarkList);
+
+    return prefs.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,38 +61,47 @@ class _BookMarkPageState extends State<BookMarkPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: List.generate(
-            bookMarkedList.length,
-            (index) {
-              List<Map<String, dynamic>> bookMarkList = bookMarkedList.toList();
-              return ListTile(
-                  leading: Icon(
-                    Icons.subway_sharp,
-                    color: lineColorMap[bookMarkList[index]['line']],
-                    size: 35,
-                  ),
-                  title: Text(
-                    '${bookMarkList[index]['station']}',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StationInfoPage(
-                          station: bookMarkList[index]['station'].toString(),
-                          line: bookMarkList[index]['line'],
+      body: FutureBuilder(
+        future: _setInit(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: List.generate(
+                  bookMarkList.length,
+                  (index) {
+                    List bookmarks = bookMarkList.toList();
+                    return ListTile(
+                        leading: Icon(
+                          Icons.subway_sharp,
+                          color: lineColorMap[bookmarks[index]['line']],
+                          size: 35,
                         ),
-                      ),
-                    );
-                  });
-            },
-          ),
-        ),
+                        title: Text(
+                          '${bookmarks[index]['station']}',
+                          style: TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.w500),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StationInfoPage(
+                                station: bookmarks[index]['station'].toString(),
+                                line: bookmarks[index]['line'],
+                              ),
+                            ),
+                          );
+                        });
+                  },
+                ),
+              ),
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }

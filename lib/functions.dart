@@ -130,11 +130,11 @@ Map<int, List<int>> lineInfo = {
 
 // 즐겨찾기 등록한 Station Set
 // {'station': station num, 'line': line}
-List<Map<String, dynamic>> bookMarkedList = [];
+List bookMarkList = [];
 
 //최근 검색한 역 큐 구조로 저장
 //화면에 보여지는 것 고려하여, 개수는 10개로 제한
-Queue recentSearchList = Queue();
+Queue recentSearchQueue = Queue();
 
 class StationInfo {
   static Set stationSet = Set(); // 전체 역 종류
@@ -225,7 +225,7 @@ void setStationList() {
 
 //역 정보 및 그래프를 받아오는 함수
 //앱 실행 최초에만 실행하여 각 정보 전역 변수에 저장
-void setStationInfo() async {
+Future setStationInfo() async {
   ByteData data = await rootBundle.load("lib/data/stations.xlsx");
   List<int> bytes =
       data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -260,7 +260,6 @@ void setStationInfo() async {
       StationInfo.stationSet.add(stations[i]['st1']);
       StationInfo.stationSet.add(stations[i]['st2']);
     }
-
     // 역 간 연결 정보를 저장
     StationInfo.pairList = [];
     for (var i = 0; i < maxRows - 1; i++) {

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:subway/functions.dart';
 import 'package:subway/pages/map_page.dart';
 import 'package:subway/style.dart';
@@ -20,6 +23,8 @@ class _StationInfoPageState extends State<StationInfoPage>
   late TabController _tabController;
   late int _selectedLine;
 
+  late SharedPreferences prefs;
+
   @override
   void initState() {
     _selectedLine = widget.line;
@@ -36,6 +41,12 @@ class _StationInfoPageState extends State<StationInfoPage>
         length: _currentSt.lines.length,
         vsync: this);
     super.initState();
+  }
+
+  Future<String> _setInit() async {
+    prefs = await SharedPreferences.getInstance();
+
+    return prefs.toString();
   }
 
   @override
@@ -203,52 +214,61 @@ class _StationInfoPageState extends State<StationInfoPage>
           ),
         ),
       ),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TabBar(
-                isScrollable: false,
-                onTap: (index) {
-                  if (_selectedLine == _currentSt.lines[0]) {
-                    _selectedLine = _currentSt.lines[1];
-                  } else {
-                    _selectedLine = _currentSt.lines[0];
-                  }
+      body: FutureBuilder(
+        future: _setInit(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TabBar(
+                      isScrollable: false,
+                      onTap: (index) {
+                        if (_selectedLine == _currentSt.lines[0]) {
+                          _selectedLine = _currentSt.lines[1];
+                        } else {
+                          _selectedLine = _currentSt.lines[0];
+                        }
 
-                  setState(() {});
-                },
-                controller: _tabController,
-                labelColor: Colors.white,
-                labelStyle: selectedTabBarStyle,
-                unselectedLabelStyle: unselectedTabBarStyle,
-                unselectedLabelColor: Colors.grey,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: lineColorMap[_selectedLine],
-                ),
-                tabs: tabs,
+                        setState(() {});
+                      },
+                      controller: _tabController,
+                      labelColor: Colors.white,
+                      labelStyle: selectedTabBarStyle,
+                      unselectedLabelStyle: unselectedTabBarStyle,
+                      unselectedLabelColor: Colors.grey,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: lineColorMap[_selectedLine],
+                      ),
+                      tabs: tabs,
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: List.generate(
+                          _currentSt.lines.length, (index) => _buildStInfo()),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: List.generate(
-                    _currentSt.lines.length, (index) => _buildStInfo()),
-              ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
 
   bool _containMap({required targetMap}) {
-    for (var map in bookMarkedList) {
+    for (var map in bookMarkList) {
       if (mapEquals(map, targetMap)) {
         return true;
       }
@@ -410,22 +430,37 @@ class _StationInfoPageState extends State<StationInfoPage>
                   ),
                 ),
                 onTap: () {
-                  print(bookMarkedList);
+                  setState(() {
+                    for (var map in bookMarkList) {
+                      if (mapEquals(map, {
+                        'station': _currentSt.station,
+                        'line': _selectedLine
+                      })) {
+                        setState(() {
+                          bookMarkList.remove(map);
 
-                  for (var map in bookMarkedList) {
-                    if (mapEquals(map, {
-                      'station': _currentSt.station,
-                      'line': _selectedLine
-                    })) {
-                      bookMarkedList.remove(map);
-                      setState(() {});
-                      return;
+                          List<String> strList =
+                              bookMarkList.map((i) => json.encode(i)).toList();
+                          if (prefs.containsKey('bookMarkList')) {
+                            prefs.remove('bookMarkList');
+                          }
+                          print('in');
+                          print(strList);
+                          prefs.setStringList('bookMarkList', strList);
+                        });
+                        return;
+                      }
                     }
-                  }
-                  bookMarkedList.add(
-                      {'station': _currentSt.station, 'line': _selectedLine});
+                    bookMarkList.add(
+                        {'station': _currentSt.station, 'line': _selectedLine});
+                    List<String> strList =
+                        bookMarkList.map((i) => json.encode(i)).toList();
 
-                  setState(() {});
+                    if (prefs.containsKey('bookMarkList')) {
+                      prefs.remove('bookMarkList');
+                    }
+                    prefs.setStringList('bookMarkList', strList);
+                  });
                 },
               ),
             ],
