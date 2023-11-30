@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:subway/functions.dart';
 import 'package:subway/style.dart';
 
@@ -24,8 +25,6 @@ class _ResultPageState extends State<ResultPage>
 
   late String _selectedDept;
   late String _selectedArr;
-
-  List _recentSearch = ['101', '102', '104', '121', '124'];
 
   late TabController _tabController;
 
@@ -101,256 +100,349 @@ class _ResultPageState extends State<ResultPage>
     super.dispose();
   }
 
+  late SharedPreferences prefs;
+
+  Future<String> _setInit() async {
+    prefs = await SharedPreferences.getInstance();
+
+    return prefs.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(300.0),
-          child: AppBar(
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            backgroundColor: primaryBlue,
-            toolbarHeight: 300,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(30),
-              ),
-            ),
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+    return FutureBuilder(
+      future: _setInit(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return GestureDetector(
+            onTap: () {
+              FocusNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(300.0),
+                child: AppBar(
+                  elevation: 0,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: primaryBlue,
+                  toolbarHeight: 300,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(30),
                     ),
-                    Center(
-                      child: Text(
-                        '추천 경로',
-                        style: appBarTitleStyle,
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
+                  ),
+                  title: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SearchAnchor(
-                        isFullScreen: false,
-                        searchController: _departureSearchController,
-                        builder: (BuildContext context,
-                            SearchController controller) {
-                          return SearchBar(
-                            shape: MaterialStateProperty.all(
-                                const ContinuousRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(75),
-                                topRight: Radius.circular(75),
-                              ),
-                            )),
-                            onChanged: (input) {
-                              _selectedDept = input;
-                              _departureSearchController.text = input;
-                            },
-                            hintText: _selectedDept,
-                            trailing: [
-                              IconButton(
-                                icon: const Icon(Icons.compare_arrows_sharp),
-                                onPressed: () {
-                                  String temp = _selectedDept;
-                                  _selectedDept = _selectedArr;
-                                  _selectedArr = temp;
-                                  _departureSearchController.text =
-                                      _selectedDept;
-                                  _arrivalSearchController.text = _selectedArr;
-                                  setState(() {});
-                                },
-                              ),
-                            ],
-                            onTap: () {
-                              print(_departureSearchController.value.text);
-                              _departureSearchController.openView();
-                            },
-                          );
-                        },
-                        suggestionsBuilder: (BuildContext context,
-                            SearchController deptController) {
-                          final keyword = deptController.value.text;
-                          _selectedDept = keyword;
-                          return keyword.toString() != ''
-                              ? List.generate(
-                                      StationInfo.stationSet.toList().length,
-                                      (index) => StationInfo.stationSet
-                                          .toList()[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedDept = item.toString();
-                                          deptController
-                                              .closeView(item.toString());
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  )
-                              : List.generate(
-                                      5, (index) => _recentSearch[index])
-                                  .where((element) => element
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedDept = item.toString();
-                                          deptController.closeView(item);
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                    ),
-                                  );
-                        },
+                      Stack(
+                        children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              '추천 경로',
+                              style: appBarTitleStyle,
+                            ),
+                          ),
+                        ],
                       ),
-                      SearchAnchor(
-                        isFullScreen: false,
-                        searchController: _arrivalSearchController,
-                        builder: (BuildContext context,
-                            SearchController controller) {
-                          return SearchBar(
-                            shape: MaterialStateProperty.all(
-                                const ContinuousRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(75),
-                                bottomRight: Radius.circular(75),
-                              ),
-                            )),
-                            onChanged: (input) {
-                              _selectedArr = input;
-                              _arrivalSearchController.text = input;
-                            },
-                            hintText: _selectedArr,
-                            trailing: [
-                              IconButton(
-                                icon: const Icon(Icons.search),
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ResultPage(
-                                                departure: _selectedDept,
-                                                arrival: _selectedArr,
-                                              )));
-                                },
-                              ),
-                            ],
-                            onTap: () {
-                              _arrivalSearchController.openView();
-                            },
-                          );
-                        },
-                        suggestionsBuilder: (BuildContext context,
-                            SearchController arrController) {
-                          final keyword = arrController.value.text;
-                          _selectedArr = keyword;
-                          return keyword.toString() != ''
-                              ? List.generate(
-                                      StationInfo.stationSet.toList().length,
-                                      (index) => StationInfo.stationSet
-                                          .toList()[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedArr = item.toString();
-                                          arrController
-                                              .closeView(item.toString());
-                                          FocusScope.of(context).unfocus();
-                                        });
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            SearchAnchor(
+                              isFullScreen: false,
+                              searchController: _departureSearchController,
+                              builder: (BuildContext context,
+                                  SearchController controller) {
+                                return SearchBar(
+                                  shape: MaterialStateProperty.all(
+                                      const ContinuousRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(75),
+                                      topRight: Radius.circular(75),
+                                    ),
+                                  )),
+                                  onChanged: (input) {
+                                    _selectedDept = input;
+                                    _departureSearchController.text = input;
+                                  },
+                                  hintText: _selectedDept,
+                                  trailing: [
+                                    IconButton(
+                                      icon: const Icon(
+                                          Icons.compare_arrows_sharp),
+                                      onPressed: () {
+                                        String temp = _selectedDept;
+                                        _selectedDept = _selectedArr;
+                                        _selectedArr = temp;
+                                        _departureSearchController.text =
+                                            _selectedDept;
+                                        _arrivalSearchController.text =
+                                            _selectedArr;
+                                        setState(() {});
                                       },
                                     ),
-                                  )
-                              : List.generate(
-                                      5, (index) => _recentSearch[index])
-                                  .where((element) => element
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(keyword.toLowerCase()))
-                                  .map(
-                                    (item) => ListTile(
-                                      title: Text(item.toString()),
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedArr = item.toString();
-                                          arrController.closeView(item);
-                                          FocusScope.of(context).unfocus();
-                                        });
+                                  ],
+                                  onTap: () {
+                                    print(
+                                        _departureSearchController.value.text);
+                                    _departureSearchController.openView();
+                                  },
+                                );
+                              },
+                              suggestionsBuilder: (BuildContext context,
+                                  SearchController deptController) {
+                                final keyword = deptController.value.text;
+                                _selectedDept = keyword;
+                                return keyword.toString() != ''
+                                    ? List.generate(
+                                            StationInfo.stationSet
+                                                .toList()
+                                                .length,
+                                            (index) => StationInfo.stationSet.toList()[index])
+                                        .where((element) => element
+                                            .toString()
+                                            .toLowerCase()
+                                            .startsWith(keyword
+                                                .toString()
+                                                .toLowerCase()))
+                                        .map(
+                                          (item) => ListTile(
+                                            title: Text(item.toString()),
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedDept = item.toString();
+                                                deptController
+                                                    .closeView(item.toString());
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              });
+                                            },
+                                          ),
+                                        )
+                                    : List.generate(recentSearchQueue.length,
+                                            (index) => recentSearchQueue.toList()[index])
+                                        .where((element) => element
+                                            .toString()
+                                            .toLowerCase()
+                                            .startsWith(keyword.toLowerCase()))
+                                        .map(
+                                          (item) => ListTile(
+                                            title: Text(item.toString()),
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedDept = item.toString();
+                                                deptController
+                                                    .closeView(item.toString());
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              });
+                                            },
+                                          ),
+                                        );
+                              },
+                            ),
+                            SearchAnchor(
+                              isFullScreen: false,
+                              searchController: _arrivalSearchController,
+                              builder: (BuildContext context,
+                                  SearchController controller) {
+                                return SearchBar(
+                                  shape: MaterialStateProperty.all(
+                                      const ContinuousRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(75),
+                                      bottomRight: Radius.circular(75),
+                                    ),
+                                  )),
+                                  onChanged: (input) {
+                                    _selectedArr = input;
+                                    _arrivalSearchController.text = input;
+                                  },
+                                  hintText: _selectedArr,
+                                  trailing: [
+                                    IconButton(
+                                      icon: const Icon(Icons.search),
+                                      onPressed: () {
+                                        if (StationInfo.stationSet.contains(
+                                                int.parse(_selectedDept)) &&
+                                            StationInfo.stationSet.contains(
+                                                int.parse(_selectedArr)) &&
+                                            _selectedDept != _selectedArr) {
+                                          if (recentSearchQueue.length >= 10) {
+                                            recentSearchQueue.removeFirst();
+                                            recentSearchQueue.removeFirst();
+                                          }
+                                          if (!recentSearchQueue.contains(
+                                              int.parse(_selectedDept))) {
+                                            recentSearchQueue
+                                                .add(int.parse(_selectedDept));
+                                          }
+                                          if (!recentSearchQueue.contains(
+                                              int.parse(_selectedArr))) {
+                                            recentSearchQueue
+                                                .add(int.parse(_selectedArr));
+                                          }
+                                          var origList =
+                                              recentSearchQueue.toList();
+
+                                          List<String> strList = origList
+                                              .map((i) => i.toString())
+                                              .toList();
+                                          print(strList);
+                                          if (prefs.containsKey(
+                                              'recentSearchQueue')) {
+                                            prefs.remove('recentSearchQueue');
+                                          }
+                                          prefs.setStringList(
+                                              'recentSearchQueue', strList);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ResultPage(
+                                                        departure:
+                                                            _selectedDept,
+                                                        arrival: _selectedArr,
+                                                      )));
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            //없는 역, 역이 아닌 것을 검색 시 오류 메세지 출력
+                                            SnackBar(
+                                              backgroundColor: Colors.redAccent,
+                                              content: const Text(
+                                                '해당 역이 존재하지 않습니다.',
+                                              ),
+                                              duration:
+                                                  const Duration(seconds: 3),
+                                              action: SnackBarAction(
+                                                label: 'X',
+                                                textColor: Colors.white,
+                                                onPressed: () {},
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
                                     ),
-                                  );
-                        },
+                                  ],
+                                  onTap: () {
+                                    _arrivalSearchController.openView();
+                                  },
+                                );
+                              },
+                              suggestionsBuilder: (BuildContext context,
+                                  SearchController arrController) {
+                                final keyword = arrController.value.text;
+                                _selectedArr = keyword;
+                                return keyword.toString() != ''
+                                    ? List.generate(
+                                            StationInfo.stationSet
+                                                .toList()
+                                                .length,
+                                            (index) =>
+                                                StationInfo.stationSet.toList()[index])
+                                        .where((element) => element
+                                            .toString()
+                                            .toLowerCase()
+                                            .startsWith(keyword.toLowerCase()))
+                                        .map(
+                                          (item) => ListTile(
+                                            title: Text(item.toString()),
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedArr = item.toString();
+                                                arrController
+                                                    .closeView(item.toString());
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              });
+                                            },
+                                          ),
+                                        )
+                                    : List.generate(
+                                            recentSearchQueue.length,
+                                            (index) =>
+                                                recentSearchQueue.toList()[index])
+                                        .where((element) => element
+                                            .toString()
+                                            .toLowerCase()
+                                            .startsWith(keyword.toString().toLowerCase()))
+                                        .map(
+                                          (item) => ListTile(
+                                            title: Text(item.toString()),
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedArr = item.toString();
+                                                arrController
+                                                    .closeView(item.toString());
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              });
+                                            },
+                                          ),
+                                        );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                labelStyle: selectedTabBarStyle,
-                unselectedLabelStyle: unselectedTabBarStyle,
-                unselectedLabelColor: Colors.grey,
-                indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: primaryBlue),
-                tabs: _tabs,
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
+              body: Column(
                 children: [
-                  ResultTab(type: 'time'),
-                  ResultTab(type: 'dist'),
-                  ResultTab(type: 'cost'),
-                  ResultTab(type: 'time'),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TabBar(
+                      controller: _tabController,
+                      labelColor: Colors.white,
+                      labelStyle: selectedTabBarStyle,
+                      unselectedLabelStyle: unselectedTabBarStyle,
+                      unselectedLabelColor: Colors.grey,
+                      indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: primaryBlue),
+                      tabs: _tabs,
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        ResultTab(type: 'time'),
+                        ResultTab(type: 'dist'),
+                        ResultTab(type: 'cost'),
+                        ResultTab(type: 'time'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        } else {
+          return Scaffold(
+            backgroundColor: primaryBlue,
+            body: const CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          );
+        }
+      },
     );
   }
 
