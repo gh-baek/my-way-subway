@@ -2,6 +2,25 @@ import 'package:dijkstra/dijkstra.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 
+// 최초 출발 시간 5시로 통일
+// key: 각 호선, value: 배차 간격(상/하행 동일)
+// 순환선은 별도 처리 예정.
+// 각 출발역에 다시 도착하면 운행 종료로 간주
+
+Map timeInterval = {
+  1: 10,
+  2: 6,
+  3: 5,
+  4: 9,
+  5: 6,
+  6: 10,
+  7: 9,
+  8: 5,
+  9: 8,
+};
+
+Map timeTable = {};
+
 Map lineInfo = {
   1: [
     101,

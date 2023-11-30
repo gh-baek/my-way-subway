@@ -22,7 +22,7 @@ class _BookMarkPageState extends State<BookMarkPage> {
           automaticallyImplyLeading: false,
           backgroundColor: primaryBlue,
           toolbarHeight: 150,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(20),
             ),
@@ -35,7 +35,7 @@ class _BookMarkPageState extends State<BookMarkPage> {
                   Container(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
@@ -82,35 +82,6 @@ class _BookMarkPageState extends State<BookMarkPage> {
                   });
             },
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLineTile(int line) {
-    return Card(
-      color: Colors.white,
-      child: ExpansionTile(
-        leading: Icon(Icons.subway_sharp, color: lineColorMap[line]),
-        title: Text(
-          '${line}호선',
-          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-        ),
-        children: List.generate(
-          lineInfo[line].length,
-          (index) => ListTile(
-              title: Text(lineInfo[line][index].toString()),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StationInfoPage(
-                      station: lineInfo[line][index].toString(),
-                      line: line,
-                    ),
-                  ),
-                );
-              }),
         ),
       ),
     );

@@ -450,6 +450,9 @@ class _StationInfoPageState extends State<StationInfoPage>
     );
   }
 
+  //도착 예정 시간
+  //int _getArrivalTime() {}
+
   String _getCongestion() {
     DateTime dt = DateTime.now();
     int index = (dt.hour - 5);
@@ -511,7 +514,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                         ),
                       ),
                       const Text(
-                        '입니다',
+                        ' 입니다',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w400,
