@@ -91,9 +91,9 @@ void main() {
     // } else {
     //   print('최소 환승 루트: $minimumTransferRoute');
     // }
-
-
-    setCongestionInfo();
-    print(StationInfo.congestionMap[1]);
+    int line = 1;
+    timeInterval[line];
+    List firstTimeTable;
+    for(;lineInfo[line];)
   });
 }

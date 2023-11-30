@@ -83,6 +83,10 @@ class _SearchStationState extends State<SearchStation> {
                                     MaterialPageRoute(
                                         builder: (context) => StationInfoPage(
                                               station: _selectedSt,
+                                              line: StationInfo
+                                                  .stationMap[
+                                                      int.parse(_selectedSt)]!
+                                                  .lines[0],
                                             )));
                               },
                             ),
