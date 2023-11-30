@@ -6,7 +6,7 @@ TextStyle appBarTitleStyle = const TextStyle(
   fontWeight: FontWeight.w600,
 );
 TextStyle homeMenuStyle = const TextStyle(
-  fontSize: 18.0,
+  fontSize: 20.0,
   color: Colors.black,
   fontWeight: FontWeight.w600,
 );

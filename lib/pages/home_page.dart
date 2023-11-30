@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
       onPressed: () {},
     ),
   ];
-  List _recentSearch = ['101', '102', '104', '121', '306'];
 
   @override
   void initState() {
@@ -141,7 +140,9 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   )
                               : List.generate(
-                                      5, (index) => _recentSearch[index])
+                                      recentSearchList.length,
+                                      (index) =>
+                                          recentSearchList.toList()[index])
                                   .where((element) => element
                                       .toLowerCase()
                                       .startsWith(keyword.toLowerCase()))
@@ -181,6 +182,12 @@ class _HomePageState extends State<HomePage> {
                               IconButton(
                                 icon: const Icon(Icons.search),
                                 onPressed: () {
+                                  if (recentSearchList.length >= 10) {
+                                    recentSearchList.removeFirst();
+                                    recentSearchList.removeFirst();
+                                  }
+                                  recentSearchList.add(_selectedDept);
+                                  recentSearchList.add(_selectedArr);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -223,7 +230,9 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   )
                               : List.generate(
-                                      5, (index) => _recentSearch[index])
+                                      recentSearchList.length,
+                                      (index) =>
+                                          recentSearchList.toList()[index])
                                   .where((element) => element
                                       .toString()
                                       .toLowerCase()
