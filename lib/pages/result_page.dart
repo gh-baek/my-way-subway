@@ -89,6 +89,7 @@ class _ResultPageState extends State<ResultPage>
     _resultMap = findBestWay(
         departure: int.parse(widget.departure),
         arrival: int.parse(widget.arrival));
+
     super.initState();
     _selectedDept = widget.departure;
     _selectedArr = widget.arrival;
@@ -426,7 +427,7 @@ class _ResultPageState extends State<ResultPage>
                         ResultTab(type: 'time'),
                         ResultTab(type: 'dist'),
                         ResultTab(type: 'cost'),
-                        ResultTab(type: 'time'),
+                        ResultTab(type: 'transfer'),
                       ],
                     ),
                   ),
@@ -491,33 +492,45 @@ class _ResultPageState extends State<ResultPage>
             height: 130,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    '소요시간',
-                    style: resultTextStyle,
-                  ),
-                  sec != 0
-                      ? Text(
+                  Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '소요시간',
+                          style: resultTextStyle,
+                        ),
+                        Text(
                           '$minute분 $sec초',
                           style: resultTimeStyle,
                         )
-                      : Text(
-                          '$minute분',
-                          style: resultTimeStyle,
-                        ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ],
+                    ),
+                  ),
+                  VerticalDivider(),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('거리 ', style: resultTextStyle),
-                      Text('${totalDist / 1000}km', style: resultTextStyle),
-                      Text(
-                        '비용 ',
-                        style: resultTextStyle,
+                      Row(
+                        children: [
+                          Text('거리 ', style: resultTextStyle),
+                          Text('${totalDist / 1000}km', style: resultTextStyle),
+                        ],
                       ),
-                      Text('${totalCost}원', style: resultTextStyle),
+                      Row(
+                        children: [
+                          Text(
+                            '비용 ',
+                            style: resultTextStyle,
+                          ),
+                          Text('${totalCost}원', style: resultTextStyle),
+                        ],
+                      ),
                     ],
                   )
                 ],
@@ -528,18 +541,30 @@ class _ResultPageState extends State<ResultPage>
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Column(
-              children: [
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _resultMap[type]!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _buildResultList(station: _resultMap[type]![index]);
-                  },
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: _resultMap[type]!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == 0) {
+                        return _buildResultList(
+                            station: _resultMap[type]![index], text: '탑승');
+                      } else if (index == _resultMap[type]!.length - 1) {
+                        return _buildResultList(
+                            station: _resultMap[type]![index], text: '하차');
+                      } else {
+                        return _buildResultList(
+                            station: _resultMap[type]![index]);
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -548,34 +573,41 @@ class _ResultPageState extends State<ResultPage>
   }
 
   //TODO: 호선 어떻게 지정
-  Widget _buildResultList({required station}) {
+  Widget _buildResultList({required station, String text = ''}) {
     return Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 20,
-                  height: 160,
-                  color:
-                      lineColorMap[StationInfo.stationMap[station]?.lines[0]],
+      color: Colors.white,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 15,
+                height: 60,
+                color: lineColorMap[StationInfo.stationMap[station]?.lines[0]],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '$station   ',
+                          style: resultTileStyle,
+                        ),
+                        Text(
+                          '$text ',
+                          style: resultTileStyle,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$station ',
-                        style: resultTileStyle,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
-          ],
-        ));
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

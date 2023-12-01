@@ -357,6 +357,8 @@ Map<String, List> findBestWay({required int departure, required int arrival}) {
   var costOutput = Dijkstra.findPathFromGraph(
       StationInfo.costGraph.nodes, departure, arrival);
 
+  var transferOutput =
+      findMinimumTransferPath(start: departure, destination: arrival);
   // print("best time output:");
   // print(timeOutput);
   // print("best distance output:");
@@ -364,7 +366,121 @@ Map<String, List> findBestWay({required int departure, required int arrival}) {
   // print("best cost output:");
   // print(costOutput);
 
-  return {'time': timeOutput, 'dist': distOutput, 'cost': costOutput};
+  return {
+    'time': timeOutput,
+    'dist': distOutput,
+    'cost': costOutput,
+    'transfer': transferOutput
+  };
+}
+
+//출발과 도착이 같은 호선일 때 경로를 반환하는 함수
+List getDirectRoute({required int start, required int destination}) {
+  int current = start;
+  int sameLine = 0;
+  for (var i = 0; i < lineInfo.length; i++) {
+    List stList = lineInfo[i + 1]!;
+    if (stList.contains(start) && stList.contains(destination)) {
+      sameLine = i + 1;
+      print('same line $sameLine');
+      break;
+    }
+  }
+  List prevRoute = [start];
+  List nextRoute = [start];
+  while (current != destination) {
+    if (StationInfo.stationMap[current]!.nextStation[sameLine] != null) {
+      current = StationInfo.stationMap[current]!.nextStation[sameLine];
+      nextRoute.add(current);
+    } else {
+      nextRoute = [];
+      break;
+    }
+  }
+  print(nextRoute);
+
+  current = start;
+  while (current != destination) {
+    if (StationInfo.stationMap[current]!.prevStation[sameLine] != null) {
+      current = StationInfo.stationMap[current]!.prevStation[sameLine];
+      prevRoute.add(current);
+    } else {
+      prevRoute = [];
+      break;
+    }
+  }
+  print(prevRoute);
+
+  List shortest = [];
+  if (nextRoute.length != 0 && prevRoute.length != 0) {
+    prevRoute.length >= nextRoute.length
+        ? shortest = nextRoute
+        : shortest = prevRoute;
+    return shortest;
+  } else if (prevRoute.length == 0) {
+    return nextRoute;
+  } else {
+    return prevRoute;
+  }
 }
 
 //BFS 알고리즘 적용한 최소 환승 길찾기 함수
+
+List findMinimumTransferPath({required int start, required int destination}) {
+  Map<int, int> visited =
+      {}; // Key: station number, Value: minimum transfers required to reach the station
+  Map<int, List<int>> path = {
+    start: [start]
+  }; // Key: station number, Value: path to reach the station
+
+  Queue<int> queue = Queue();
+  queue.add(start);
+  visited[start] = 0;
+
+  while (queue.isNotEmpty) {
+    var currentStation = queue.removeFirst();
+    var currentTransfers = visited[currentStation]!;
+
+    if (currentStation == destination) {
+      break;
+    }
+
+    for (var line in StationInfo.stationMap[currentStation]!.lines ?? []) {
+      for (var nextStation in lineInfo[line] ?? []) {
+        if (!visited.containsKey(nextStation)) {
+          visited[nextStation] = currentTransfers +
+              (line != StationInfo.stationMap[currentStation]!.lines.first
+                  ? 1
+                  : 0);
+          path[nextStation] = List.from(path[currentStation]!)
+            ..add(nextStation);
+
+          queue.add(nextStation);
+        }
+      }
+    }
+  }
+  if (path.containsKey(destination)) {
+    List resultPath = [];
+    for (var i = 0; i < path[destination]!.length - 1; i++) {
+      if (path[destination]![i] != start ||
+          path[destination]![i] != destination) {
+        var result = getDirectRoute(
+            start: path[destination]![i],
+            destination: path[destination]![i + 1]);
+        resultPath.add(result);
+      }
+    }
+    List minPath = [];
+    for (var i = 0; i < resultPath.length; i++) {
+      for (var j = 0; j < resultPath[i].length; j++) {
+        if (!minPath.contains(resultPath[i][j])) {
+          minPath.add(resultPath[i][j]);
+        }
+      }
+    }
+    return minPath;
+  }
+
+  return [];
+}

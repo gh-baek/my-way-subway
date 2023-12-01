@@ -1,105 +1,130 @@
+import 'dart:collection';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:subway/functions.dart';
 
 void main() {
   testWidgets('station function test', (WidgetTester tester) async {
     setStationInfo();
-    // Station st = StationInfo.stationList[0];
-    // print(st.station);
-    // print(st.lines);
-    // print(st.prevStation);
-    // print(st.nextStation);
-    // List<int> findMinimumTransferRouteBFS(int start, int destination) {
-    //   Queue<List<int>> queue = Queue();
-    //   Map<int, List<int>> visited = {};
-    //   Map<int, int> transferCounts = {};
-    //   List<List<int>> shortestPaths = [];
-    //
-    //   queue.add([start]);
-    //   transferCounts[start] = 0;
-    //
-    //   while (queue.isNotEmpty) {
-    //     var currentPath = queue.removeFirst();
-    //     var currentStation = currentPath.last;
-    //
-    //     if (currentStation == destination) {
-    //       shortestPaths.add(currentPath);
-    //       continue;
-    //     }
-    //
-    //     for (var line in StationInfo.stationMap[currentStation]!.lines) {
-    //       var next = StationInfo.stationMap[currentStation]!.nextStation[line];
-    //       if (next != null && !visited.containsKey(next)) {
-    //         List<int> newPath = List.from(currentPath);
-    //         newPath.add(next);
-    //
-    //         if (StationInfo.stationMap[next]!.lines.contains(line)) {
-    //           transferCounts[next] = transferCounts[currentStation]!;
-    //         } else {
-    //           transferCounts[next] = transferCounts[currentStation]! + 1;
-    //         }
-    //
-    //         queue.add(newPath);
-    //         visited[next] = newPath;
-    //       }
-    //     }
-    //
-    //     for (var line in StationInfo.stationMap[currentStation]!.lines) {
-    //       var prev = StationInfo.stationMap[currentStation]!.prevStation[line];
-    //       if (prev != null && !visited.containsKey(prev)) {
-    //         List<int> newPath = List.from(currentPath);
-    //         newPath.add(prev);
-    //
-    //         if (StationInfo.stationMap[prev]!.lines.contains(line)) {
-    //           transferCounts[prev] = transferCounts[currentStation]!;
-    //         } else {
-    //           transferCounts[prev] = transferCounts[currentStation]! + 1;
-    //         }
-    //
-    //         queue.add(newPath);
-    //         visited[prev] = newPath;
-    //       }
-    //     }
-    //   }
-    //
-    //   if (shortestPaths.isNotEmpty) {
-    //     int minTransfers = transferCounts[shortestPaths.first.last]!;
-    //     for (var path in shortestPaths) {
-    //       if (transferCounts[path.last]! < minTransfers) {
-    //         minTransfers = transferCounts[path.last]!;
-    //       }
-    //     }
-    //
-    //     shortestPaths
-    //         .retainWhere((path) => transferCounts[path.last] == minTransfers);
-    //     shortestPaths.sort((a, b) => a.length.compareTo(b.length));
-    //
-    //     return shortestPaths.first;
-    //   }
-    //
-    //   return []; // 목적지까지 경로를 찾을 수 없는 경우 빈 리스트 반환
-    // }
-    //
-    // int startStation = 102;
-    // int destinationStation = 306;
-    //
-    // List minimumTransferRoute =
-    //     findMinimumTransferRouteBFS(startStation, destinationStation);
-    //
-    // if (minimumTransferRoute.isEmpty) {
-    //   print('경로를 찾을 수 없습니다.');
-    // } else {
-    //   print('최소 환승 루트: $minimumTransferRoute');
-    // }
-    int line = 1;
-    timeInterval[line];
-    List firstTimeTable = {line,};
+    List getDirectRoute({required int start, required int destination}) {
+      int current = start;
+      int sameLine = 0;
+      for (var i = 0; i < lineInfo.length; i++) {
+        List stList = lineInfo[i + 1]!;
+        if (stList.contains(start) && stList.contains(destination)) {
+          sameLine = i + 1;
+          print('same line $sameLine');
+          break;
+        }
+      }
+      List prevRoute = [start];
+      List nextRoute = [start];
+      while (current != destination) {
+        if (StationInfo.stationMap[current]!.nextStation[sameLine] != null) {
+          current = StationInfo.stationMap[current]!.nextStation[sameLine];
+          nextRoute.add(current);
+        } else {
+          nextRoute = [];
+          break;
+        }
+      }
+      print(nextRoute);
 
-    for (var st in lineInfo[line]!) {
-      Map stTimeMap;
-      List time = [];
-      time.add();
-      firstTimeTable.add()
+      current = start;
+      while (current != destination) {
+        if (StationInfo.stationMap[current]!.prevStation[sameLine] != null) {
+          current = StationInfo.stationMap[current]!.prevStation[sameLine];
+          prevRoute.add(current);
+        } else {
+          prevRoute = [];
+          break;
+        }
+      }
+      print(prevRoute);
+
+      List shortest = [];
+      if (nextRoute.length != 0 && prevRoute.length != 0) {
+        prevRoute.length >= nextRoute.length
+            ? shortest = nextRoute
+            : shortest = prevRoute;
+        return shortest;
+      } else if (prevRoute.length == 0) {
+        return nextRoute;
+      } else {
+        return prevRoute;
+      }
+    }
+
+    List findMinimumTransferPath(int start, int destination) {
+      Map<int, int> visited =
+          {}; // Key: station number, Value: minimum transfers required to reach the station
+      Map<int, List<int>> path = {
+        start: [start]
+      }; // Key: station number, Value: path to reach the station
+
+      Queue<int> queue = Queue();
+      queue.add(start);
+      visited[start] = 0;
+
+      while (queue.isNotEmpty) {
+        var currentStation = queue.removeFirst();
+        var currentTransfers = visited[currentStation]!;
+
+        if (currentStation == destination) {
+          break;
+        }
+
+        for (var line in StationInfo.stationMap[currentStation]!.lines ?? []) {
+          for (var nextStation in lineInfo[line] ?? []) {
+            if (!visited.containsKey(nextStation)) {
+              visited[nextStation] = currentTransfers +
+                  (line != StationInfo.stationMap[currentStation]!.lines.first
+                      ? 1
+                      : 0);
+              path[nextStation] = List.from(path[currentStation]!)
+                ..add(nextStation);
+
+              queue.add(nextStation);
+            }
+          }
+        }
+      }
+      print(path);
+      if (path.containsKey(destination)) {
+        List resultPath = [];
+        for (var i = 0; i < path[destination]!.length - 1; i++) {
+          if (path[destination]![i] != start ||
+              path[destination]![i] != destination) {
+            var result = getDirectRoute(
+                start: path[destination]![i],
+                destination: path[destination]![i + 1]);
+            resultPath.add(result);
+          }
+        }
+        List minPath = [];
+        for (var i = 0; i < resultPath.length; i++) {
+          for (var j = 0; j < resultPath[i].length; j++) {
+            if (!minPath.contains(resultPath[i][j])) {
+              minPath.add(resultPath[i][j]);
+            }
+          }
+        }
+        return minPath;
+      }
+
+      return [];
+    }
+
+    int startStation = 101; // Replace with your start station number
+    int destinationStation =
+        306; // Replace with your destination station number
+
+    List minimumTransferPath =
+        findMinimumTransferPath(startStation, destinationStation);
+    if (minimumTransferPath.isEmpty) {
+      print('No path found.');
+    } else {
+      print('Minimum transfer path: $minimumTransferPath');
     }
   });
 }
