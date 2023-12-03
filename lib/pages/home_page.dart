@@ -227,8 +227,10 @@ class _HomePageState extends State<HomePage> {
                                       IconButton(
                                         icon: const Icon(Icons.search),
                                         onPressed: () {
-                                          if (_selectedDept is int &&
-                                              _selectedArr is int &&
+                                          if (int.tryParse(_selectedDept) !=
+                                                  null &&
+                                              int.tryParse(_selectedArr) !=
+                                                  null &&
                                               StationInfo.stationSet.contains(
                                                   int.parse(_selectedDept)) &&
                                               StationInfo.stationSet.contains(
