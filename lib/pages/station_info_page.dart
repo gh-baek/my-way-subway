@@ -312,7 +312,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                     Text('다음 열차'),
                     Center(
                         child: Text(
-                      '7분',
+                      '5분',
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.red,

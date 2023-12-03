@@ -275,7 +275,9 @@ class _ResultPageState extends State<ResultPage>
                                     IconButton(
                                       icon: const Icon(Icons.search),
                                       onPressed: () {
-                                        if (StationInfo.stationSet.contains(
+                                        if (_selectedDept is int &&
+                                            _selectedArr is int &&
+                                            StationInfo.stationSet.contains(
                                                 int.parse(_selectedDept)) &&
                                             StationInfo.stationSet.contains(
                                                 int.parse(_selectedArr)) &&
@@ -308,7 +310,7 @@ class _ResultPageState extends State<ResultPage>
                                           prefs.setStringList(
                                               'recentSearchQueue', strList);
 
-                                          Navigator.pushReplacement(
+                                          Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
