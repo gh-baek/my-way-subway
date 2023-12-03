@@ -61,8 +61,8 @@ class _StationInfoPageState extends State<StationInfoPage>
           child: Align(
             alignment: Alignment.center,
             child: Text(
-              "${line}호선",
-              style: TextStyle(fontSize: 18.0),
+              "$line호선",
+              style: const TextStyle(fontSize: 18.0),
             ),
           ),
         ),
@@ -83,7 +83,7 @@ class _StationInfoPageState extends State<StationInfoPage>
               bottom: Radius.circular(20),
             ),
           ),
-          title: Container(
+          title: SizedBox(
             height: 200,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -94,7 +94,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                     Container(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -251,7 +251,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                   ),
                   Expanded(
                     child: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: List.generate(
                           _currentSt.lines.length, (index) => _buildStInfo()),
@@ -261,7 +261,7 @@ class _StationInfoPageState extends State<StationInfoPage>
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         },
       ),
@@ -290,7 +290,7 @@ class _StationInfoPageState extends State<StationInfoPage>
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: Colors.black12, width: 1),
           ),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(
@@ -384,7 +384,7 @@ class _StationInfoPageState extends State<StationInfoPage>
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MapPage()));
+                      MaterialPageRoute(builder: (context) => const MapPage()));
                 },
               ),
               GestureDetector(

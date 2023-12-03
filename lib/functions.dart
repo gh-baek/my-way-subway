@@ -4,25 +4,6 @@ import 'package:dijkstra/dijkstra.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 
-// 최초 출발 시간 5시로 통일
-// key: 각 호선, value: 배차 간격(상/하행 동일)
-// 순환선은 별도 처리 예정.
-// 각 출발역에 다시 도착하면 운행 종료로 간주
-
-Map timeInterval = {
-  1: 10,
-  2: 6,
-  3: 5,
-  4: 9,
-  5: 6,
-  6: 10,
-  7: 9,
-  8: 5,
-  9: 8,
-};
-
-Map timeTable = {};
-
 // {호선: [해당 호선에 포함된 역], ...}
 Map<int, List<int>> lineInfo = {
   1: [
@@ -128,23 +109,25 @@ Map<int, List<int>> lineInfo = {
   9: [112, 901, 406, 605, 902, 119, 903, 702, 904, 621, 211]
 };
 
-// 즐겨찾기 등록한 Station Set
-// {'station': station num, 'line': line}
+// 즐겨찾기 등록한 Station List
+// [{'station': station num, 'line': line}]
 List<Map<String, int>> bookMarkList = [];
 
 //최근 검색한 역 큐 구조로 저장
 //화면에 보여지는 것 고려하여, 개수는 10개로 제한
 Queue<int> recentSearchQueue = Queue();
 
+//엑셀에서 받아온 정보를 가공하여 저장한 전역 클래스 변수
 class StationInfo {
-  static Set stationSet = Set(); // 전체 역 종류
-  static List<List> pairList = []; // 역 간 그래프
-  //static Map stationLine = {};
+  static Set stationSet = {}; // 전체 역 종류
+  static List<List> pairList = []; // 역 간 연결 리스트
   static Graph timeGraph = Graph({}); // 역 간 소요 시간 그래프
   static Graph distGraph = Graph({}); // 역 간 거리 그래프
   static Graph costGraph = Graph({}); // 역 간 비용 그래프
-  static List<Station> stationList = []; //Station List
+  static List<Station> stationList = []; //Station 자료형으로 저장한 역 List
   static Map<int, Station> stationMap = {}; //{역번호: Station} 각 역에 대한 Station Map
+  // 각 호선에 대한 혼잡도 정보
+  // {line: {station: [hourly congestion info],}}
   static Map congestionMap = {
     1: {},
     2: {},
@@ -170,7 +153,7 @@ class Station {
   int station;
   List<int> lines;
   Map prevStation; //{line1: prevSt of line1, line2: prevSt of line2}
-  Map nextStation;
+  Map nextStation; //{line1: nextSt of line1, line2: nextSt of line2}
 
   Station(
       {required this.station,
@@ -179,6 +162,8 @@ class Station {
       required this.lines});
 }
 
+//setStationInfo 내에서 실행
+//해당 역, 속한 노선, 이전, 다음역 정보를 담고 있는 Station 형식의 List 저장
 void setStationList() {
   for (var st in StationInfo.stationSet) {
     List<int> lineList = [];
@@ -232,9 +217,6 @@ Future setStationInfo() async {
   var excel = Excel.decodeBytes(bytes);
 
   for (var table in excel.tables.keys) {
-    // print(table); //sheet Name
-    // print(excel.tables[table]?.maxCols);
-    // print(excel.tables[table]?.maxRows);
     int maxRows = excel.tables[table]!.maxRows; //엑셀에 저장된 행(거리, 비용, 시간 역간 정보) 개수
     List stations = []; //(역1, 역2, 시간(초), 거리(미터), 비용(원))
 
@@ -359,12 +341,6 @@ Map<String, List> findBestWay({required int departure, required int arrival}) {
 
   var transferOutput =
       findMinimumTransferPath(start: departure, destination: arrival);
-  // print("best time output:");
-  // print(timeOutput);
-  // print("best distance output:");
-  // print(distOutput);
-  // print("best cost output:");
-  // print(costOutput);
 
   return {
     'time': timeOutput,
@@ -382,7 +358,6 @@ List getDirectRoute({required int start, required int destination}) {
     List stList = lineInfo[i + 1]!;
     if (stList.contains(start) && stList.contains(destination)) {
       sameLine = i + 1;
-      print('same line $sameLine');
       break;
     }
   }
@@ -397,7 +372,6 @@ List getDirectRoute({required int start, required int destination}) {
       break;
     }
   }
-  print(nextRoute);
 
   current = start;
   while (current != destination) {
@@ -409,15 +383,14 @@ List getDirectRoute({required int start, required int destination}) {
       break;
     }
   }
-  print(prevRoute);
 
   List shortest = [];
-  if (nextRoute.length != 0 && prevRoute.length != 0) {
+  if (nextRoute.isNotEmpty && prevRoute.isNotEmpty) {
     prevRoute.length >= nextRoute.length
         ? shortest = nextRoute
         : shortest = prevRoute;
     return shortest;
-  } else if (prevRoute.length == 0) {
+  } else if (prevRoute.isEmpty) {
     return nextRoute;
   } else {
     return prevRoute;
@@ -425,7 +398,6 @@ List getDirectRoute({required int start, required int destination}) {
 }
 
 //BFS 알고리즘 적용한 최소 환승 길찾기 함수
-
 List findMinimumTransferPath({required int start, required int destination}) {
   Map<int, int> visited =
       {}; // Key: station number, Value: minimum transfers required to reach the station

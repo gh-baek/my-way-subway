@@ -9,8 +9,7 @@ class ResultPage extends StatefulWidget {
   final String departure;
   final String arrival;
 
-  ResultPage({Key? key, required this.departure, required this.arrival})
-      : super(key: key);
+  ResultPage({Key? key, required this.departure, required this.arrival});
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -34,7 +33,7 @@ class _ResultPageState extends State<ResultPage>
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: primaryBlue, width: 1)),
-        child: Align(
+        child: const Align(
           alignment: Alignment.center,
           child: Text(
             "최소 시간",
@@ -47,7 +46,7 @@ class _ResultPageState extends State<ResultPage>
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: primaryBlue, width: 1)),
-        child: Align(
+        child: const Align(
           alignment: Alignment.center,
           child: Text(
             "최단 거리",
@@ -60,7 +59,7 @@ class _ResultPageState extends State<ResultPage>
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: primaryBlue, width: 1)),
-        child: Align(
+        child: const Align(
           alignment: Alignment.center,
           child: Text(
             "최소 비용",
@@ -73,7 +72,7 @@ class _ResultPageState extends State<ResultPage>
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: primaryBlue, width: 1)),
-        child: Align(
+        child: const Align(
           alignment: Alignment.center,
           child: Text(
             "최소 환승",
@@ -131,7 +130,7 @@ class _ResultPageState extends State<ResultPage>
                   automaticallyImplyLeading: false,
                   backgroundColor: primaryBlue,
                   toolbarHeight: 300,
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(30),
                     ),
@@ -144,7 +143,8 @@ class _ResultPageState extends State<ResultPage>
                           Container(
                             alignment: Alignment.centerLeft,
                             child: IconButton(
-                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                           ),
@@ -195,8 +195,6 @@ class _ResultPageState extends State<ResultPage>
                                     ),
                                   ],
                                   onTap: () {
-                                    print(
-                                        _departureSearchController.value.text);
                                     _departureSearchController.openView();
                                   },
                                 );
@@ -304,7 +302,6 @@ class _ResultPageState extends State<ResultPage>
                                           List<String> strList = origList
                                               .map((i) => i.toString())
                                               .toList();
-                                          print(strList);
                                           if (prefs.containsKey(
                                               'recentSearchQueue')) {
                                             prefs.remove('recentSearchQueue');
@@ -428,10 +425,10 @@ class _ResultPageState extends State<ResultPage>
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                        ResultTab(type: 'time'),
-                        ResultTab(type: 'dist'),
-                        ResultTab(type: 'cost'),
-                        ResultTab(type: 'transfer'),
+                        _buildResultTab(type: 'time'),
+                        _buildResultTab(type: 'dist'),
+                        _buildResultTab(type: 'cost'),
+                        _buildResultTab(type: 'transfer'),
                       ],
                     ),
                   ),
@@ -475,14 +472,13 @@ class _ResultPageState extends State<ResultPage>
     return cost;
   }
 
-  Column ResultTab({required String type}) {
+  Column _buildResultTab({required String type}) {
     int totalTime = getTotalTime(result: _resultMap[type]!);
     int totalDist = getTotalDist(result: _resultMap[type]!);
     int totalCost = getTotalCost(result: _resultMap[type]!);
 
     int minute = totalTime ~/ 60;
     int sec = totalTime % 60;
-    print(totalTime);
     return Column(
       children: [
         Padding(
@@ -516,7 +512,7 @@ class _ResultPageState extends State<ResultPage>
                       ],
                     ),
                   ),
-                  VerticalDivider(),
+                  const VerticalDivider(),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -532,7 +528,7 @@ class _ResultPageState extends State<ResultPage>
                             '비용 ',
                             style: resultTextStyle,
                           ),
-                          Text('${totalCost}원', style: resultTextStyle),
+                          Text('$totalCost원', style: resultTextStyle),
                         ],
                       ),
                     ],

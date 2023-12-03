@@ -34,7 +34,7 @@ class _SearchStationState extends State<SearchStation> {
             automaticallyImplyLeading: false,
             backgroundColor: primaryBlue,
             toolbarHeight: 150,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(20),
               ),
@@ -47,7 +47,7 @@ class _SearchStationState extends State<SearchStation> {
                     Container(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -71,10 +71,10 @@ class _SearchStationState extends State<SearchStation> {
                           return SearchBar(
                             shape: MaterialStateProperty.all(
                                 const ContinuousRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(25),
-                                  ),
-                                )),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(25),
+                              ),
+                            )),
                             onChanged: (input) {
                               _selectedSt = input;
                               _searchController.text = input;
@@ -87,19 +87,17 @@ class _SearchStationState extends State<SearchStation> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              StationInfoPage(
+                                          builder: (context) => StationInfoPage(
                                                 station: _selectedSt,
                                                 line: StationInfo
                                                     .stationMap[
-                                                int.parse(_selectedSt)]!
+                                                        int.parse(_selectedSt)]!
                                                     .lines[0],
                                               )));
                                 },
                               ),
                             ],
                             onTap: () {
-                              print(_searchController.value.text);
                               _searchController.openView();
                             },
                           );
@@ -109,19 +107,15 @@ class _SearchStationState extends State<SearchStation> {
                           final keyword = deptController.value.text;
                           _selectedSt = keyword;
                           return List.generate(
-                              StationInfo.stationSet
-                                  .toList()
-                                  .length,
+                                  StationInfo.stationSet.toList().length,
                                   (index) =>
-                              StationInfo.stationSet.toList()[index])
-                              .where((element) =>
-                              element
+                                      StationInfo.stationSet.toList()[index])
+                              .where((element) => element
                                   .toString()
                                   .toLowerCase()
                                   .startsWith(keyword.toLowerCase()))
                               .map(
-                                (item) =>
-                                ListTile(
+                                (item) => ListTile(
                                   title: Text(item.toString()),
                                   onTap: () {
                                     setState(() {
@@ -131,7 +125,7 @@ class _SearchStationState extends State<SearchStation> {
                                     });
                                   },
                                 ),
-                          );
+                              );
                         },
                       ),
                     ],
@@ -176,21 +170,19 @@ class _SearchStationState extends State<SearchStation> {
         ),
         children: List.generate(
           lineInfo[line]!.length,
-              (index) =>
-              ListTile(
-                  title: Text(lineInfo[line]![index].toString()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            StationInfoPage(
-                              station: lineInfo[line]![index].toString(),
-                              line: line,
-                            ),
-                      ),
-                    );
-                  }),
+          (index) => ListTile(
+              title: Text(lineInfo[line]![index].toString()),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StationInfoPage(
+                      station: lineInfo[line]![index].toString(),
+                      line: line,
+                    ),
+                  ),
+                );
+              }),
         ),
       ),
     );

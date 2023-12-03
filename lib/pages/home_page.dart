@@ -33,6 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   late SharedPreferences prefs;
 
+  //홈 화면 렌더링 전, sharedpreference 로드
+  //저장되어 있는 최근 검색 역, 즐겨찾기 역 불러오기
   Future<String> _setInit() async {
     if (StationInfo.stationSet.isEmpty) {
       await setStationInfo();
@@ -63,7 +65,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime dt = DateTime.now();
-    print(dt.hour);
     String timeText = '';
     if (dt.hour >= 5 && dt.hour < 12) {
       timeText = "좋은 아침 입니다";
@@ -257,7 +258,6 @@ class _HomePageState extends State<HomePage> {
                                             List<String> strList = origList
                                                 .map((i) => i.toString())
                                                 .toList();
-                                            print(strList);
                                             if (prefs.containsKey(
                                                 'recentSearchQueue')) {
                                               prefs.remove('recentSearchQueue');
