@@ -308,7 +308,7 @@ class _ResultPageState extends State<ResultPage>
                                           prefs.setStringList(
                                               'recentSearchQueue', strList);
 
-                                          Navigator.push(
+                                          Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>

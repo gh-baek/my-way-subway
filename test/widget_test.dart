@@ -58,9 +58,12 @@ void main() {
     List findMinimumTransferPath(int start, int destination) {
       Map<int, int> visited =
           {}; // Key: station number, Value: minimum transfers required to reach the station
-      Map<int, List<int>> path = {
-        start: [start]
-      }; // Key: station number, Value: path to reach the station
+      Map<int, List<List<int>>> paths = {
+        start: [
+          [start]
+        ]
+      }; // Key: station number, Value: list of paths to reach the station
+      // Key: station number, Value: path to reach the station
 
       Queue<int> queue = Queue();
       queue.add(start);
@@ -76,28 +79,27 @@ void main() {
 
         for (var line in StationInfo.stationMap[currentStation]!.lines ?? []) {
           for (var nextStation in lineInfo[line] ?? []) {
-            if (!visited.containsKey(nextStation)) {
-              visited[nextStation] = currentTransfers +
-                  (line != StationInfo.stationMap[currentStation]!.lines.first
-                      ? 1
-                      : 0);
-              path[nextStation] = List.from(path[currentStation]!)
-                ..add(nextStation);
-
-              queue.add(nextStation);
+            if (!paths.containsKey(nextStation)) {
+              paths[nextStation] = [];
+            }
+            for (var path in paths[currentStation]!) {
+              if (!path.contains(nextStation)) {
+                paths[nextStation]!.add([...path, nextStation]);
+                queue.add(nextStation);
+              }
             }
           }
         }
       }
-      print(path);
-      if (path.containsKey(destination)) {
+      print(paths);
+      if (paths.containsKey(destination)) {
         List resultPath = [];
-        for (var i = 0; i < path[destination]!.length - 1; i++) {
-          if (path[destination]![i] != start ||
-              path[destination]![i] != destination) {
+        for (var i = 0; i < paths[destination]!.length - 1; i++) {
+          if (paths[destination]![i] != start ||
+              paths[destination]![i] != destination) {
             var result = getDirectRoute(
-                start: path[destination]![i],
-                destination: path[destination]![i + 1]);
+                start: paths[destination]![i],
+                destination: paths[destination]![i + 1]);
             resultPath.add(result);
           }
         }
